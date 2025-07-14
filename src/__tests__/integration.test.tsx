@@ -55,6 +55,42 @@ const mockSongsData: SongsData = {
   ],
 };
 
+// 複数アルバムのテスト用データ
+const mockMultipleAlbumsSongsData: SongsData = {
+  artists: [
+    {
+      id: 'artist001',
+      name: 'テストアーティスト1',
+      albums: [
+        {
+          id: 'album001',
+          name: 'テストアルバム1',
+          jacketUrl: '/test-jacket1.jpg',
+          tracks: [
+            {
+              id: 'track001',
+              title: 'テスト楽曲1',
+              youtubeUrl: 'https://www.youtube.com/watch?v=testId1',
+            },
+          ],
+        },
+        {
+          id: 'album002',
+          name: 'テストアルバム2',
+          jacketUrl: '/test-jacket2.jpg',
+          tracks: [
+            {
+              id: 'track002',
+              title: 'テスト楽曲2',
+              youtubeUrl: 'https://www.youtube.com/watch?v=testId2',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
 const mockQuestions: QuizQuestion[] = [
   {
     track: {
@@ -134,8 +170,30 @@ describe('中トロドン アプリケーション 統合テスト', () => {
           const startButton = screen.getByRole('button', { name: 'クイズ開始' });
           fireEvent.click(startButton);
 
-          // 選択されたアルバムがある場合、アルバムIDがURLパラメータに含まれる
-          expect(mockPush).toHaveBeenCalledWith('/quiz?albums=album001');
+          // 単一アルバムのため全アルバム選択となり、クエリパラメータなしで遷移
+          expect(mockPush).toHaveBeenCalledWith('/quiz');
+        });
+      });
+
+      it('全アルバム選択時はクエリパラメータなしでクイズ画面に遷移する', async () => {
+        // 複数アルバムのデータを使用
+        mockLoadSongsData.mockResolvedValue(mockMultipleAlbumsSongsData);
+
+        render(<HomePage />);
+
+        // デフォルトで全アルバムが選択されているため（2個のアルバム）、
+        // これが全アルバム選択状態となる
+
+        await waitFor(() => {
+          expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
+        });
+
+        await waitFor(() => {
+          const startButton = screen.getByRole('button', { name: 'クイズ開始' });
+          fireEvent.click(startButton);
+
+          // 全アルバムが選択されている場合、クエリパラメータなしで遷移
+          expect(mockPush).toHaveBeenCalledWith('/quiz');
         });
       });
     });

@@ -363,6 +363,63 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       expect(mockPush).toHaveBeenCalledWith('/quiz?albums=album001%2Calbum002');
     });
 
+    it('すべてのアルバムが選択されている場合、クエリパラメータなしでクイズ画面に遷移する', async () => {
+      // 単一アーティストのみのデータに変更
+      const singleArtistMockData = {
+        artists: [
+          {
+            id: 'artist001',
+            name: 'Test Artist 1',
+            albums: [
+              {
+                id: 'album001',
+                name: 'Test Album 1',
+                jacketUrl: '/images/test1.png',
+                tracks: [
+                  {
+                    id: 'track001',
+                    title: 'Test Track 1',
+                    youtubeUrl: 'https://www.youtube.com/watch?v=test1',
+                  },
+                ],
+              },
+              {
+                id: 'album002',
+                name: 'Test Album 2',
+                jacketUrl: '/images/test2.png',
+                tracks: [
+                  {
+                    id: 'track002',
+                    title: 'Test Track 2',
+                    youtubeUrl: 'https://www.youtube.com/watch?v=test2',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      mockLoadSongsData.mockResolvedValue(singleArtistMockData);
+
+      render(<HomePage />);
+
+      // アーティスト1の全アルバム（2個）がデフォルトで選択されている状態を確認
+      await waitFor(() => {
+        expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
+      });
+
+      // クイズ開始ボタンをクリック
+      await waitFor(() => {
+        const startButton = screen.getByText('クイズ開始');
+        expect(startButton).toBeEnabled();
+        fireEvent.click(startButton);
+      });
+
+      // すべてのアルバムが選択されているので、クエリパラメータなしで遷移
+      expect(mockPush).toHaveBeenCalledWith('/quiz');
+    });
+
     it('アルバム未選択時にクイズ開始ボタンが無効になる', async () => {
       render(<HomePage />);
 

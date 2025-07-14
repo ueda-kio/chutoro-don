@@ -61,9 +61,17 @@ export default function HomePage() {
       return;
     }
 
-    // 選択されたアルバムIDをクエリパラメータとして渡す
-    const albumParams = selectedAlbumIds.join(',');
-    router.push(`/quiz?albums=${encodeURIComponent(albumParams)}`);
+    // 全アルバム数を取得
+    const totalAlbums = songsData?.artists.reduce((count, artist) => count + artist.albums.length, 0) || 0;
+
+    // すべてのアルバムが選択されている場合は、クエリパラメータなしでクイズ画面に遷移
+    if (selectedAlbumIds.length === totalAlbums) {
+      router.push('/quiz');
+    } else {
+      // 選択されたアルバムIDをクエリパラメータとして渡す
+      const albumParams = selectedAlbumIds.join(',');
+      router.push(`/quiz?albums=${encodeURIComponent(albumParams)}`);
+    }
   };
 
   if (loading) {
