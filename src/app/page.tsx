@@ -13,6 +13,7 @@ export default function HomePage() {
   const [selectedAlbumIds, setSelectedAlbumIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [defaultPlayDuration, setDefaultPlayDuration] = useState<number | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -73,14 +74,22 @@ export default function HomePage() {
     // 全アルバム数を取得
     const totalAlbums = songsData?.artists.reduce((count, artist) => count + artist.albums.length, 0) || 0;
 
-    // すべてのアルバムが選択されている場合は、クエリパラメータなしでクイズ画面に遷移
-    if (selectedAlbumIds.length === totalAlbums) {
-      router.push('/quiz');
-    } else {
-      // 選択されたアルバムIDをクエリパラメータとして渡す
-      const albumParams = selectedAlbumIds.join(',');
-      router.push(`/quiz?albums=${encodeURIComponent(albumParams)}`);
+    // URLパラメータを構築
+    const params = new URLSearchParams();
+    
+    // アルバム選択のパラメータ
+    if (selectedAlbumIds.length !== totalAlbums) {
+      params.set('albums', selectedAlbumIds.join(','));
     }
+    
+    // デフォルト再生時間のパラメータ
+    if (defaultPlayDuration !== null) {
+      params.set('defaultDuration', defaultPlayDuration.toString());
+    }
+    
+    // クイズ画面に遷移
+    const queryString = params.toString();
+    router.push(`/quiz${queryString ? `?${queryString}` : ''}`);
   };
 
   if (loading) {
@@ -171,6 +180,8 @@ export default function HomePage() {
             onAlbumToggle={handleAlbumToggle}
             onSelectAll={handleSelectAll}
             onDeselectAll={handleDeselectAll}
+            defaultPlayDuration={defaultPlayDuration}
+            onDefaultPlayDurationChange={setDefaultPlayDuration}
           />
         )}
       </div>

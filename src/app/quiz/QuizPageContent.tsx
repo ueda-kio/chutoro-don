@@ -15,6 +15,7 @@ export function QuizPageContent() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [songsData, setSongsData] = useState<SongsData | null>(null);
+  const [defaultPlayDuration, setDefaultPlayDuration] = useState<number | null>(null);
 
   // 出題範囲設定モーダル用の状態
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,6 +28,12 @@ export function QuizPageContent() {
       try {
         const data = await loadSongsData();
         setSongsData(data);
+
+        // デフォルト再生時間のパラメータを取得
+        const defaultDurationParam = searchParams.get('defaultDuration');
+        if (defaultDurationParam) {
+          setDefaultPlayDuration(Number(defaultDurationParam));
+        }
 
         const albumsParam = searchParams.get('albums');
 
@@ -201,7 +208,12 @@ export function QuizPageContent() {
         </div>
 
         {/* クイズプレイヤー */}
-        <QuizPlayer question={currentQuestion} onNext={handleNext} isLastQuestion={currentQuestionIndex === questions.length - 1} />
+        <QuizPlayer 
+          question={currentQuestion} 
+          onNext={handleNext} 
+          isLastQuestion={currentQuestionIndex === questions.length - 1}
+          defaultPlayDuration={defaultPlayDuration}
+        />
 
         {/* 出題範囲設定モーダル */}
         {songsData && (
@@ -215,6 +227,8 @@ export function QuizPageContent() {
             onAlbumToggle={handleAlbumToggle}
             onSelectAll={handleSelectAll}
             onDeselectAll={handleDeselectAll}
+            defaultPlayDuration={defaultPlayDuration}
+            onDefaultPlayDurationChange={setDefaultPlayDuration}
           />
         )}
       </div>

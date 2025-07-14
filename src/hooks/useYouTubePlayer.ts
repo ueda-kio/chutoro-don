@@ -60,7 +60,6 @@ export function useYouTubePlayer() {
       },
       events: {
         onReady: () => {
-          console.log('YouTube player ready');
           setIsPlayerReady(true);
         },
         onStateChange: (event: YT.OnStateChangeEvent) => {

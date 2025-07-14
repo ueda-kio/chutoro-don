@@ -254,7 +254,7 @@ describe('Quiz Player Component (クイズプレイヤー)', () => {
       expect(screen.getByText('答えを表示')).toBeInTheDocument();
     });
 
-    it('問題が変わると再生時間がデフォルトの1秒に戻る', () => {
+    it('デフォルト再生時間が未設定の場合、問題が変わっても再生時間が引き継がれる', () => {
       const { rerender } = render(<QuizPlayer question={mockQuizQuestion} onNext={mockOnNext} isLastQuestion={false} />);
 
       // 再生時間を3秒に変更
@@ -270,9 +270,30 @@ describe('Quiz Player Component (クイズプレイヤー)', () => {
 
       rerender(<QuizPlayer question={newQuestion} onNext={mockOnNext} isLastQuestion={false} />);
 
-      // 再生時間がデフォルトの1秒に戻ることを確認
+      // 再生時間が引き継がれることを確認
       const updatedDurationSelect = screen.getByLabelText('再生時間');
-      expect(updatedDurationSelect).toHaveValue('1');
+      expect(updatedDurationSelect).toHaveValue('3');
+    });
+
+    it('デフォルト再生時間が設定されている場合、問題が変わるとその値に戻る', () => {
+      const { rerender } = render(<QuizPlayer question={mockQuizQuestion} onNext={mockOnNext} isLastQuestion={false} defaultPlayDuration={2} />);
+
+      // 再生時間を5秒に変更
+      const durationSelect = screen.getByLabelText('再生時間');
+      fireEvent.change(durationSelect, { target: { value: '5' } });
+      expect(durationSelect).toHaveValue('5');
+
+      // 新しい問題に変更
+      const newQuestion = {
+        ...mockQuizQuestion,
+        track: { ...mockQuizQuestion.track, id: 'track002', title: '新しい楽曲' },
+      };
+
+      rerender(<QuizPlayer question={newQuestion} onNext={mockOnNext} isLastQuestion={false} defaultPlayDuration={2} />);
+
+      // 再生時間がデフォルトの2秒に戻ることを確認
+      const updatedDurationSelect = screen.getByLabelText('再生時間');
+      expect(updatedDurationSelect).toHaveValue('2');
     });
   });
 

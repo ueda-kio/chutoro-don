@@ -35,6 +35,8 @@ describe('AlbumSelectorModal コンポーネント', () => {
     onAlbumToggle: jest.fn(),
     onSelectAll: jest.fn(),
     onDeselectAll: jest.fn(),
+    defaultPlayDuration: null as number | null,
+    onDefaultPlayDurationChange: jest.fn(),
   };
 
   beforeEach(() => {
@@ -177,6 +179,68 @@ describe('AlbumSelectorModal コンポーネント', () => {
       fireEvent.click(deselectAllButton);
 
       expect(defaultProps.onDeselectAll).toHaveBeenCalled();
+    });
+  });
+
+  describe('再生時間デフォルト設定機能', () => {
+    it('再生時間設定のセクションが表示される', () => {
+      render(<AlbumSelectorModal {...defaultProps} />);
+
+      expect(screen.getByText('再生時間設定')).toBeInTheDocument();
+      expect(screen.getByText('デフォルト再生時間')).toBeInTheDocument();
+    });
+
+    it('デフォルト再生時間の選択肢が表示される', () => {
+      render(<AlbumSelectorModal {...defaultProps} />);
+
+      const select = screen.getByLabelText('デフォルト再生時間');
+      expect(select).toBeInTheDocument();
+      
+      // 選択肢の確認
+      expect(screen.getByText('未選択（現在の再生時間を引き継ぎ）')).toBeInTheDocument();
+      expect(screen.getByText('1秒')).toBeInTheDocument();
+      expect(screen.getByText('1.5秒')).toBeInTheDocument();
+      expect(screen.getByText('2秒')).toBeInTheDocument();
+      expect(screen.getByText('3秒')).toBeInTheDocument();
+      expect(screen.getByText('5秒')).toBeInTheDocument();
+    });
+
+    it('デフォルト再生時間が未設定の場合、未選択が選択されている', () => {
+      render(<AlbumSelectorModal {...defaultProps} defaultPlayDuration={null} />);
+
+      const select = screen.getByLabelText('デフォルト再生時間') as HTMLSelectElement;
+      expect(select.value).toBe('');
+    });
+
+    it('デフォルト再生時間が設定されている場合、その値が選択されている', () => {
+      render(<AlbumSelectorModal {...defaultProps} defaultPlayDuration={2} />);
+
+      const select = screen.getByLabelText('デフォルト再生時間') as HTMLSelectElement;
+      expect(select.value).toBe('2');
+    });
+
+    it('デフォルト再生時間を変更するとonDefaultPlayDurationChangeが呼ばれる', () => {
+      render(<AlbumSelectorModal {...defaultProps} />);
+
+      const select = screen.getByLabelText('デフォルト再生時間');
+      fireEvent.change(select, { target: { value: '3' } });
+
+      expect(defaultProps.onDefaultPlayDurationChange).toHaveBeenCalledWith(3);
+    });
+
+    it('デフォルト再生時間を未選択に戻すとonDefaultPlayDurationChangeがnullで呼ばれる', () => {
+      render(<AlbumSelectorModal {...defaultProps} defaultPlayDuration={2} />);
+
+      const select = screen.getByLabelText('デフォルト再生時間');
+      fireEvent.change(select, { target: { value: '' } });
+
+      expect(defaultProps.onDefaultPlayDurationChange).toHaveBeenCalledWith(null);
+    });
+
+    it('説明文が表示される', () => {
+      render(<AlbumSelectorModal {...defaultProps} />);
+
+      expect(screen.getByText('未選択の場合、次の問題でも現在の再生時間がそのまま使用されます。')).toBeInTheDocument();
     });
   });
 

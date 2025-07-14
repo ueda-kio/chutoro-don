@@ -9,17 +9,23 @@ interface QuizPlayerProps {
   question: QuizQuestion;
   onNext: () => void;
   isLastQuestion: boolean;
+  defaultPlayDuration?: number | null;
 }
 
-export function QuizPlayer({ question, onNext, isLastQuestion }: QuizPlayerProps) {
+export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDuration }: QuizPlayerProps) {
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
-  const [playDuration, setPlayDuration] = useState(1); // デフォルト1秒
+  const [playDuration, setPlayDuration] = useState(defaultPlayDuration ?? 1);
   const { isReady, isPlayerReady, isPlaying, initializePlayer, playTrack, stopTrack } = useYouTubePlayer();
 
   useEffect(() => {
     setIsAnswerRevealed(false);
-    setPlayDuration(1); // 次の問題でデフォルトの1秒に戻す
-  }, [question]);
+    // デフォルト再生時間が設定されている場合は、そのデフォルト値を使用
+    // 未設定の場合は、現在の再生時間を引き継ぐ
+    if (defaultPlayDuration !== null && defaultPlayDuration !== undefined) {
+      setPlayDuration(defaultPlayDuration);
+    }
+    // defaultPlayDurationがnullの場合は、現在のplayDurationを維持（引き継ぎ）
+  }, [question, defaultPlayDuration]);
 
   useEffect(() => {
     if (isReady) {
