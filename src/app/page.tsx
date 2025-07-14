@@ -12,14 +12,10 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        {/* ヘッダー */}
         <div className="mb-12">
-          <h1 className="text-6xl font-bold text-gray-900 mb-6">中トロドン</h1>
-          <p className="text-2xl text-gray-600 mb-4">楽曲の中盤を聴いて曲名を当てるクイズアプリ</p>
-          <p className="text-lg text-gray-500">すべての楽曲からランダムに出題されます</p>
+          <h1 className="text-6xl font-bold text-gray-900 mb-6">BUMP 中トロドン</h1>
+          <p className="text-2xl text-gray-600 mb-4">曲の中トロを聴いて曲名を当てよう</p>
         </div>
-
-        {/* スタートボタン */}
         <button
           type="button"
           onClick={handleStartQuiz}

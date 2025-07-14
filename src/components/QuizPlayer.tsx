@@ -106,6 +106,11 @@ export function QuizPlayer({ question, onNext, isLastQuestion }: QuizPlayerProps
           </div>
         </div>
 
+        {/* 注意文言 */}
+        <div className="text-center mt-3 mb-4">
+          <p className="text-xs text-gray-400">※ 1曲目は再生に時間がかかる場合があります</p>
+        </div>
+
         <div className="text-center">
           <button
             type="button"

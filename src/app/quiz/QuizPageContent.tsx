@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import type { SongsData, QuizQuestion } from '@/types';
 import { loadSongsData, generateQuizQuestionsFromAllSongs } from '@/utils/quiz';
 import { QuizPlayer } from '@/components/QuizPlayer';
+import Link from 'next/link';
 
 export function QuizPageContent() {
   const router = useRouter();
@@ -71,7 +72,9 @@ export function QuizPageContent() {
         {/* ヘッダー */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">中トロドン</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              <Link href="/">中トロドン</Link>
+            </h1>
             <p className="text-lg text-gray-600">
               Q.{currentQuestionIndex + 1} / {questions.length}
             </p>
