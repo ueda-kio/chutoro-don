@@ -107,7 +107,7 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       render(<HomePage />);
 
       await waitFor(() => {
-        expect(screen.getByText('出題範囲を選択')).toBeInTheDocument();
+        expect(screen.getByText('出題範囲')).toBeInTheDocument();
       });
     });
 
@@ -123,6 +123,11 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       render(<HomePage />);
 
       await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
+      await waitFor(() => {
         const artistSelect = screen.getByDisplayValue('Test Artist 1');
         expect(artistSelect).toBeInTheDocument();
       });
@@ -132,14 +137,160 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       render(<HomePage />);
 
       await waitFor(() => {
-        expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
+        expect(screen.getAllByText('2個のアルバムが選択されています')).toHaveLength(1);
+      });
+    });
+
+    it('「出題範囲を設定」ボタンが表示される', async () => {
+      render(<HomePage />);
+
+      await waitFor(() => {
+        expect(screen.getByText('出題範囲を設定')).toBeInTheDocument();
       });
     });
   });
 
-  describe('アーティスト選択機能', () => {
-    it('アーティスト選択プルダウンが表示される', async () => {
+  describe('モーダル機能', () => {
+    it('「出題範囲を設定」ボタンをクリックするとモーダルが開く', async () => {
       render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('出題範囲設定')).toBeInTheDocument();
+      });
+    });
+
+    it('モーダル内にアーティスト選択機能が表示される', async () => {
+      render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('アーティストを選択')).toBeInTheDocument();
+      });
+    });
+
+    it('モーダル内にアルバム選択機能が表示される', async () => {
+      render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Test Album 1')).toBeInTheDocument();
+        expect(screen.getByText('Test Album 2')).toBeInTheDocument();
+      });
+    });
+
+    it('モーダル内で「設定を閉じる」ボタンをクリックするとモーダルが閉じる', async () => {
+      render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('出題範囲設定')).toBeInTheDocument();
+      });
+
+      const closeButton = screen.getByText('設定を閉じる');
+      fireEvent.click(closeButton);
+
+      await waitFor(() => {
+        expect(screen.queryByText('出題範囲設定')).not.toBeInTheDocument();
+      });
+    });
+
+    it('モーダルのオーバーレイをクリックするとモーダルが閉じる', async () => {
+      render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('出題範囲設定')).toBeInTheDocument();
+      });
+
+      // オーバーレイ（背景）をクリック
+      const overlay = screen.getByLabelText('モーダルを閉じる');
+      fireEvent.click(overlay);
+
+      await waitFor(() => {
+        expect(screen.queryByText('出題範囲設定')).not.toBeInTheDocument();
+      });
+    });
+
+    it('モーダル内でアルバム選択を変更できる', async () => {
+      render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('出題範囲設定')).toBeInTheDocument();
+      });
+
+      // アルバムの選択を変更
+      const albumContainer = screen.getByText('Test Album 1').closest('[role="button"]');
+      expect(albumContainer).toBeInTheDocument();
+      fireEvent.click(albumContainer as HTMLElement);
+
+      // モーダルを閉じる
+      const closeButton = screen.getByText('設定を閉じる');
+      fireEvent.click(closeButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('1個のアルバムが選択されています')).toBeInTheDocument();
+      });
+    });
+
+    it('モーダル内で「すべて解除」ボタンが機能する', async () => {
+      render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('出題範囲設定')).toBeInTheDocument();
+      });
+
+      const deselectAllButton = screen.getByText('すべて解除');
+      fireEvent.click(deselectAllButton);
+
+      // モーダルを閉じる
+      const closeButton = screen.getByText('設定を閉じる');
+      fireEvent.click(closeButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('出題範囲を設定してください')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('モーダル内のアーティスト選択機能', () => {
+    it('モーダル内でアーティスト選択プルダウンが表示される', async () => {
+      render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
 
       await waitFor(() => {
         const artistSelect = screen.getByLabelText('アーティストを選択');
@@ -147,8 +298,13 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       });
     });
 
-    it('全アーティストがプルダウンに表示される', async () => {
+    it('モーダル内で全アーティストがプルダウンに表示される', async () => {
       render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
 
       await waitFor(() => {
         const artistSelect = screen.getByLabelText('アーティストを選択');
@@ -158,25 +314,39 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       });
     });
 
-    it('アーティスト変更時にアルバム選択がリセットされる', async () => {
+    it('モーダル内でアーティスト変更時にアルバム選択がリセットされる', async () => {
       render(<HomePage />);
 
       await waitFor(() => {
-        expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('出題範囲設定')).toBeInTheDocument();
       });
 
       const artistSelect = screen.getByLabelText('アーティストを選択');
       fireEvent.change(artistSelect, { target: { value: 'artist002' } });
 
+      // モーダルを閉じる
+      const closeButton = screen.getByText('設定を閉じる');
+      fireEvent.click(closeButton);
+
       await waitFor(() => {
-        expect(screen.queryByText('2個のアルバムが選択されています')).not.toBeInTheDocument();
+        expect(screen.getByText('出題範囲を設定してください')).toBeInTheDocument();
       });
     });
   });
 
-  describe('アルバム選択機能', () => {
-    it('選択されたアーティストのアルバム一覧が表示される', async () => {
+  describe('モーダル内のアルバム選択機能', () => {
+    it('モーダル内で選択されたアーティストのアルバム一覧が表示される', async () => {
       render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
 
       await waitFor(() => {
         expect(screen.getByText('Test Album 1')).toBeInTheDocument();
@@ -184,8 +354,13 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       });
     });
 
-    it('各アルバムにチェックボックスが表示される', async () => {
+    it('モーダル内で各アルバムにチェックボックスが表示される', async () => {
       render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
 
       await waitFor(() => {
         const checkboxes = screen.getAllByRole('checkbox');
@@ -195,8 +370,13 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       });
     });
 
-    it('アルバムジャケット画像が表示される', async () => {
+    it('モーダル内でアルバムジャケット画像が表示される', async () => {
       render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
 
       await waitFor(() => {
         const albumImage1 = screen.getByAltText('Test Album 1');
@@ -205,79 +385,42 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
         expect(albumImage2).toBeInTheDocument();
       });
     });
-
-    it('アルバムをクリックして選択/解除できる', async () => {
-      render(<HomePage />);
-
-      await waitFor(() => {
-        expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
-      });
-
-      const albumContainer = screen.getByText('Test Album 1').closest('[role="button"]');
-      expect(albumContainer).toBeInTheDocument();
-      fireEvent.click(albumContainer as HTMLElement);
-
-      await waitFor(() => {
-        expect(screen.getByText('1個のアルバムが選択されています')).toBeInTheDocument();
-      });
-    });
-
-    it('チェックボックスを直接クリックして選択/解除できる', async () => {
-      render(<HomePage />);
-
-      await waitFor(() => {
-        const checkboxes = screen.getAllByRole('checkbox');
-        expect(checkboxes[0]).toBeChecked();
-      });
-
-      // アルバムカード全体をクリックして解除
-      const albumCards = screen.getAllByRole('button').filter((btn) => btn.getAttribute('tabindex') === '0');
-      fireEvent.click(albumCards[0]);
-
-      await waitFor(() => {
-        expect(screen.getByText('1個のアルバムが選択されています')).toBeInTheDocument();
-      });
-    });
   });
 
-  describe('一括選択機能', () => {
-    it('「すべて選択」ボタンが表示される', async () => {
+  describe('モーダル内の一括選択機能', () => {
+    it('モーダル内で「すべて選択」ボタンが表示される', async () => {
       render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
 
       await waitFor(() => {
         expect(screen.getByText('すべて選択')).toBeInTheDocument();
       });
     });
 
-    it('「すべて解除」ボタンが表示される', async () => {
+    it('モーダル内で「すべて解除」ボタンが表示される', async () => {
       render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
 
       await waitFor(() => {
         expect(screen.getByText('すべて解除')).toBeInTheDocument();
       });
     });
 
-    it('「すべて解除」をクリックすると全アルバムが解除される', async () => {
+    it('モーダル内で「すべて選択」をクリックすると全アルバムが選択される', async () => {
       render(<HomePage />);
 
       await waitFor(() => {
-        expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
       });
-
-      const deselectAllButton = screen.getByText('すべて解除');
-      fireEvent.click(deselectAllButton);
-
-      await waitFor(() => {
-        expect(screen.queryByText('2個のアルバムが選択されています')).not.toBeInTheDocument();
-      });
-
-      const checkboxes = screen.getAllByRole('checkbox');
-      expect(checkboxes[0]).not.toBeChecked();
-      expect(checkboxes[1]).not.toBeChecked();
-    });
-
-    it('「すべて選択」をクリックすると全アルバムが選択される', async () => {
-      render(<HomePage />);
 
       // まず全て解除
       await waitFor(() => {
@@ -290,12 +433,10 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       fireEvent.click(selectAllButton);
 
       await waitFor(() => {
-        expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
+        const checkboxes = screen.getAllByRole('checkbox');
+        expect(checkboxes[0]).toBeChecked();
+        expect(checkboxes[1]).toBeChecked();
       });
-
-      const checkboxes = screen.getAllByRole('checkbox');
-      expect(checkboxes[0]).toBeChecked();
-      expect(checkboxes[1]).toBeChecked();
     });
   });
 
@@ -323,11 +464,20 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
     it('アルバムが選択されていない場合、クイズ開始ボタンが非活性化される', async () => {
       render(<HomePage />);
 
-      // すべて解除
+      // モーダルを開いてすべて解除
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
       await waitFor(() => {
         const deselectAllButton = screen.getByText('すべて解除');
         fireEvent.click(deselectAllButton);
       });
+
+      // モーダルを閉じる
+      const closeButton = screen.getByText('設定を閉じる');
+      fireEvent.click(closeButton);
 
       await waitFor(() => {
         const startButton = screen.getByText('クイズ開始');
@@ -341,14 +491,6 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
 
       await waitFor(() => {
         expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
-      });
-
-      // 1つ解除
-      const albumCards = screen.getAllByRole('button').filter((btn) => btn.getAttribute('tabindex') === '0');
-      fireEvent.click(albumCards[0]);
-
-      await waitFor(() => {
-        expect(screen.getByText('1個のアルバムが選択されています')).toBeInTheDocument();
       });
     });
 
@@ -423,11 +565,20 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
     it('アルバム未選択時にクイズ開始ボタンが無効になる', async () => {
       render(<HomePage />);
 
-      // すべて解除
+      // モーダルを開いてすべて解除
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
       await waitFor(() => {
         const deselectAllButton = screen.getByText('すべて解除');
         fireEvent.click(deselectAllButton);
       });
+
+      // モーダルを閉じる
+      const closeButton = screen.getByText('設定を閉じる');
+      fireEvent.click(closeButton);
 
       await waitFor(() => {
         expect(screen.queryByText('2個のアルバムが選択されています')).not.toBeInTheDocument();
@@ -496,14 +647,24 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       render(<HomePage />);
 
       await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
+
+      await waitFor(() => {
         const albumContainers = screen.getAllByRole('button');
         const albumContainer = albumContainers.find((container) => container.textContent?.includes('Test Album 1'));
         expect(albumContainer).toHaveAttribute('tabIndex', '0');
       });
     });
 
-    it('Enterキーでアルバム選択ができる', async () => {
+    it('モーダル内でEnterキーでアルバム選択ができる', async () => {
       render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
 
       await waitFor(() => {
         const albumContainers = screen.getAllByRole('button');
@@ -513,13 +674,22 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
         fireEvent.keyDown(albumContainer as HTMLElement, { key: 'Enter' });
       });
 
+      // モーダルを閉じる
+      const closeButton = screen.getByText('設定を閉じる');
+      fireEvent.click(closeButton);
+
       await waitFor(() => {
         expect(screen.getByText('1個のアルバムが選択されています')).toBeInTheDocument();
       });
     });
 
-    it('スペースキーでアルバム選択ができる', async () => {
+    it('モーダル内でスペースキーでアルバム選択ができる', async () => {
       render(<HomePage />);
+
+      await waitFor(() => {
+        const settingsButton = screen.getByText('出題範囲を設定');
+        fireEvent.click(settingsButton);
+      });
 
       await waitFor(() => {
         const albumContainers = screen.getAllByRole('button');
@@ -528,6 +698,10 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
 
         fireEvent.keyDown(albumContainer as HTMLElement, { key: ' ' });
       });
+
+      // モーダルを閉じる
+      const closeButton = screen.getByText('設定を閉じる');
+      fireEvent.click(closeButton);
 
       await waitFor(() => {
         expect(screen.getByText('1個のアルバムが選択されています')).toBeInTheDocument();

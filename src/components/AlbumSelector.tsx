@@ -51,7 +51,7 @@ export function AlbumSelector({
       {selectedArtist && (
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-medium text-gray-900">アルバムを選択 ({selectedArtist.name})</h3>
+            <h3 className="text-sm font-medium text-gray-700">アルバムを選択 ({selectedArtist.name})</h3>
             <div className="space-x-2">
               <button type="button" onClick={onSelectAll} className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded">
                 すべて選択

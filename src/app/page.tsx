@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { SongsData } from '@/types';
 import { loadSongsData } from '@/utils/quiz';
-import { AlbumSelector } from '@/components/AlbumSelector';
+import { AlbumSelectorModal } from '@/components/Modal';
 
 export default function HomePage() {
   const router = useRouter();
@@ -12,6 +12,7 @@ export default function HomePage() {
   const [selectedArtistId, setSelectedArtistId] = useState('');
   const [selectedAlbumIds, setSelectedAlbumIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -53,6 +54,14 @@ export default function HomePage() {
 
   const handleDeselectAll = () => {
     setSelectedAlbumIds([]);
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   const handleStartQuiz = () => {
@@ -110,16 +119,28 @@ export default function HomePage() {
 
         {/* 出題範囲設定エリア */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">出題範囲を選択</h2>
-          <AlbumSelector
-            artists={songsData.artists}
-            selectedArtistId={selectedArtistId}
-            selectedAlbumIds={selectedAlbumIds}
-            onArtistChange={handleArtistChange}
-            onAlbumToggle={handleAlbumToggle}
-            onSelectAll={handleSelectAll}
-            onDeselectAll={handleDeselectAll}
-          />
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">出題範囲</h2>
+            <button
+              type="button"
+              onClick={handleOpenModal}
+              className="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md font-medium transition-colors"
+            >
+              出題範囲を設定
+            </button>
+          </div>
+          <div className="text-center py-8">
+            <p className="text-gray-600 mb-4">
+              {selectedAlbumIds.length > 0 
+                ? `${selectedAlbumIds.length}個のアルバムが選択されています` 
+                : '出題範囲を設定してください'}
+            </p>
+            {selectedAlbumIds.length === 0 && (
+              <p className="text-sm text-gray-500">
+                「出題範囲を設定」ボタンをクリックして、アルバムを選択してください
+              </p>
+            )}
+          </div>
         </div>
 
         {/* クイズ開始ボタン */}
@@ -136,10 +157,22 @@ export default function HomePage() {
           >
             クイズ開始
           </button>
-          {selectedAlbumIds.length > 0 && (
-            <p className="text-sm text-gray-600 mt-4">{selectedAlbumIds.length}個のアルバムが選択されています</p>
-          )}
         </div>
+
+        {/* 出題範囲設定モーダル */}
+        {songsData && (
+          <AlbumSelectorModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            artists={songsData.artists}
+            selectedArtistId={selectedArtistId}
+            selectedAlbumIds={selectedAlbumIds}
+            onArtistChange={handleArtistChange}
+            onAlbumToggle={handleAlbumToggle}
+            onSelectAll={handleSelectAll}
+            onDeselectAll={handleDeselectAll}
+          />
+        )}
       </div>
     </div>
   );
