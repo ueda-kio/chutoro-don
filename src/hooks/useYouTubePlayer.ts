@@ -5,13 +5,13 @@ import { extractYouTubeVideoId } from '@/utils/quiz';
 
 declare global {
   interface Window {
-    YT: any;
+    YT: typeof YT;
     onYouTubeIframeAPIReady: () => void;
   }
 }
 
 export function useYouTubePlayer() {
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<YT.Player | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -63,7 +63,7 @@ export function useYouTubePlayer() {
           console.log('YouTube player ready');
           setIsPlayerReady(true);
         },
-        onStateChange: (event: any) => {
+        onStateChange: (event: YT.OnStateChangeEvent) => {
           if (event.data === window.YT.PlayerState.PLAYING) {
             setIsPlaying(true);
           } else {
