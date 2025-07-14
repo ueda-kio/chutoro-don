@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import HomePage from '@/app/page';
 import { QuizPageContent } from '@/app/quiz/QuizPageContent';
 import * as quizUtils from '@/utils/quiz';
@@ -82,50 +82,71 @@ describe('中トロドン アプリケーション 統合テスト', () => {
     (useRouter as jest.Mock).mockReturnValue({
       push: mockPush,
     });
+
+    // useSearchParams のモックを設定
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn().mockReturnValue(null),
+    });
+
     mockPush.mockClear();
     mockLoadSongsData.mockClear();
     mockGenerateQuizQuestionsFromAllSongs.mockClear();
+
+    // デフォルトのモック設定
+    mockLoadSongsData.mockResolvedValue(mockSongsData);
+    mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(mockQuestions);
   });
 
   describe('機能要件1: トップ画面（シンプルスタート機能）', () => {
     describe('UI表示要件', () => {
-      it('アプリケーションタイトル「中トロドン」が表示される', () => {
+      it('アプリケーションタイトル「中トロドン」が表示される', async () => {
         render(<HomePage />);
 
-        expect(screen.getByText('中トロドン')).toBeInTheDocument();
+        await waitFor(() => {
+          expect(screen.getByText('中トロドン')).toBeInTheDocument();
+        });
       });
 
-      it('アプリケーションの説明文が表示される', () => {
+      it('アプリケーションの説明文が表示される', async () => {
         render(<HomePage />);
 
-        expect(screen.getByText('楽曲の中盤を聴いて曲名を当てるクイズアプリ')).toBeInTheDocument();
-        expect(screen.getByText('すべての楽曲からランダムに出題されます')).toBeInTheDocument();
+        await waitFor(() => {
+          expect(screen.getByText('中トロドン')).toBeInTheDocument();
+          expect(screen.getByText('曲の中トロを聴いて曲名を当てよう')).toBeInTheDocument();
+        });
       });
 
-      it('スタートボタンが表示される', () => {
+      it('スタートボタンが表示される', async () => {
         render(<HomePage />);
 
-        const startButton = screen.getByRole('button', { name: 'スタート' });
-        expect(startButton).toBeInTheDocument();
+        await waitFor(() => {
+          const startButton = screen.getByRole('button', { name: 'クイズ開始' });
+          expect(startButton).toBeInTheDocument();
+        });
       });
     });
 
     describe('ユーザーインタラクション要件', () => {
-      it('スタートボタンクリックでクイズ画面に遷移する', () => {
+      it('スタートボタンクリックでクイズ画面に遷移する', async () => {
         render(<HomePage />);
 
-        const startButton = screen.getByRole('button', { name: 'スタート' });
-        fireEvent.click(startButton);
+        await waitFor(() => {
+          const startButton = screen.getByRole('button', { name: 'クイズ開始' });
+          fireEvent.click(startButton);
 
-        expect(mockPush).toHaveBeenCalledWith('/quiz');
+          // 選択されたアルバムがある場合、アルバムIDがURLパラメータに含まれる
+          expect(mockPush).toHaveBeenCalledWith('/quiz?albums=album001');
+        });
       });
     });
     describe('レスポンシブデザイン要件', () => {
-      it('画面中央にコンテンツが配置される', () => {
+      it('画面中央にコンテンツが配置される', async () => {
         render(<HomePage />);
 
-        const mainContainer = screen.getByText('中トロドン').closest('div')?.parentElement?.parentElement;
-        expect(mainContainer).toHaveClass('min-h-screen', 'flex', 'items-center', 'justify-center');
+        await waitFor(() => {
+          const mainContainer = screen.getByText('中トロドン').closest('div')?.parentElement?.parentElement;
+          expect(mainContainer).toHaveClass('min-h-screen', 'py-8', 'px-4');
+        });
       });
     });
   });
@@ -137,6 +158,13 @@ describe('中トロドン アプリケーション 統合テスト', () => {
     });
 
     describe('初期化とデータ読み込み要件', () => {
+      beforeEach(() => {
+        // useSearchParamsがnullを返すように設定（アルバム指定なし）
+        (useSearchParams as jest.Mock).mockReturnValue({
+          get: jest.fn().mockReturnValue(null),
+        });
+      });
+
       it('楽曲データを読み込んで全楽曲からランダムに10問生成する', async () => {
         render(<QuizPageContent />);
 
@@ -159,6 +187,10 @@ describe('中トロドン アプリケーション 統合テスト', () => {
 
     describe('UI表示要件', () => {
       it('アプリケーションタイトルと問題番号が表示される', async () => {
+        (useSearchParams as jest.Mock).mockReturnValue({
+          get: jest.fn().mockReturnValue(null), // アルバム指定なし
+        });
+
         render(<QuizPageContent />);
 
         await waitFor(() => {
@@ -168,6 +200,10 @@ describe('中トロドン アプリケーション 統合テスト', () => {
       });
 
       it('クイズプレイヤーコンポーネントが表示される', async () => {
+        (useSearchParams as jest.Mock).mockReturnValue({
+          get: jest.fn().mockReturnValue(null), // アルバム指定なし
+        });
+
         render(<QuizPageContent />);
 
         await waitFor(() => {
@@ -179,6 +215,10 @@ describe('中トロドン アプリケーション 統合テスト', () => {
 
     describe('クイズ進行要件', () => {
       it('クイズ終了後はトップページに戻る', async () => {
+        (useSearchParams as jest.Mock).mockReturnValue({
+          get: jest.fn().mockReturnValue(null), // アルバム指定なし
+        });
+
         render(<QuizPageContent />);
 
         await waitFor(() => {
@@ -191,13 +231,19 @@ describe('中トロドン アプリケーション 統合テスト', () => {
           fireEvent.click(finishButton);
         });
 
-        expect(mockPush).toHaveBeenCalledWith('/');
+        await waitFor(() => {
+          expect(mockPush).toHaveBeenCalledWith('/');
+        });
       });
     });
   });
 
   describe('機能要件3: 楽曲再生制御（YouTube IFrame Player API連携）', () => {
     beforeEach(() => {
+      // useSearchParamsがnullを返すように設定（アルバム指定なし）
+      (useSearchParams as jest.Mock).mockReturnValue({
+        get: jest.fn().mockReturnValue(null),
+      });
       mockLoadSongsData.mockResolvedValue(mockSongsData);
       mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(mockQuestions);
     });
@@ -211,12 +257,12 @@ describe('中トロドン アプリケーション 統合テスト', () => {
         });
       });
 
-      it('再生時間選択プルダウンが表示される（1秒、3秒、5秒、10秒、15秒）', async () => {
+      it('再生時間選択プルダウンが表示される（1秒、1.5秒、2秒、3秒、5秒）', async () => {
         render(<QuizPageContent />);
 
         await waitFor(() => {
           expect(screen.getByLabelText('再生時間')).toBeInTheDocument();
-          expect(screen.getByDisplayValue('5秒')).toBeInTheDocument(); // デフォルト値
+          expect(screen.getByDisplayValue('1秒')).toBeInTheDocument(); // デフォルト値
         });
       });
 
@@ -225,10 +271,10 @@ describe('中トロドン アプリケーション 統合テスト', () => {
 
         await waitFor(() => {
           expect(screen.getByRole('option', { name: '1秒' })).toBeInTheDocument();
+          expect(screen.getByRole('option', { name: '1.5秒' })).toBeInTheDocument();
+          expect(screen.getByRole('option', { name: '2秒' })).toBeInTheDocument();
           expect(screen.getByRole('option', { name: '3秒' })).toBeInTheDocument();
           expect(screen.getByRole('option', { name: '5秒' })).toBeInTheDocument();
-          expect(screen.getByRole('option', { name: '10秒' })).toBeInTheDocument();
-          expect(screen.getByRole('option', { name: '15秒' })).toBeInTheDocument();
         });
       });
     });
@@ -236,6 +282,10 @@ describe('中トロドン アプリケーション 統合テスト', () => {
 
   describe('機能要件4: 解答表示機能', () => {
     beforeEach(() => {
+      // useSearchParamsがnullを返すように設定（アルバム指定なし）
+      (useSearchParams as jest.Mock).mockReturnValue({
+        get: jest.fn().mockReturnValue(null),
+      });
       mockLoadSongsData.mockResolvedValue(mockSongsData);
       mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(mockQuestions);
     });

@@ -1,5 +1,6 @@
 import {
   calculateStartTime,
+  generateQuizQuestions,
   generateQuizQuestionsFromAllSongs,
   extractYouTubeVideoId,
   loadSongsData,
@@ -225,6 +226,150 @@ describe('Quiz Utility Functions', () => {
         (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
         await expect(loadSongsData()).rejects.toThrow('Failed to load songs data');
+      });
+    });
+  });
+
+  describe('アルバム選択機能', () => {
+    describe('generateQuizQuestions (選択されたアルバムから問題生成)', () => {
+      it('選択されたアルバムの楽曲のみから問題を生成する', () => {
+        const selectedAlbumIds = ['album001', 'album003'];
+        const questions = generateQuizQuestions(selectedAlbumIds, mockSongsData, 10);
+
+        // 選択されたアルバムの楽曲のみが含まれることを確認
+        const trackIds = questions.map(q => q.track.id);
+        expect(trackIds).toContain('track001');
+        expect(trackIds).toContain('track002');
+        expect(trackIds).toContain('track003');
+        expect(trackIds).toContain('track005');
+
+        // 選択されていないアルバムの楽曲は含まれない
+        expect(trackIds).not.toContain('track004');
+      });
+
+      it('指定された問題数の通りに問題を生成する', () => {
+        const selectedAlbumIds = ['album001'];
+        const questions = generateQuizQuestions(selectedAlbumIds, mockSongsData, 2);
+
+        expect(questions).toHaveLength(2);
+      });
+
+      it('選択されたアルバムの楽曲数より多い問題数を指定しても、楽曲数までしか生成しない', () => {
+        const selectedAlbumIds = ['album003']; // 1曲しかない
+        const questions = generateQuizQuestions(selectedAlbumIds, mockSongsData, 10);
+
+        expect(questions).toHaveLength(1);
+        expect(questions[0].track.id).toBe('track005');
+      });
+
+      it('存在しないアルバムIDが指定された場合でもエラーにならない', () => {
+        const selectedAlbumIds = ['album001', 'nonexistent'];
+        const questions = generateQuizQuestions(selectedAlbumIds, mockSongsData, 10);
+
+        // album001の楽曲のみ含まれる
+        expect(questions).toHaveLength(3);
+        const trackIds = questions.map(q => q.track.id);
+        expect(trackIds).toContain('track001');
+        expect(trackIds).toContain('track002');
+        expect(trackIds).toContain('track003');
+      });
+
+      it('空のアルバムIDリストが指定された場合はエラーを投げる', () => {
+        expect(() => {
+          generateQuizQuestions([], mockSongsData, 10);
+        }).toThrow('No tracks found in selected albums');
+      });
+
+      it('生成された問題の各フィールドが正しく設定される', () => {
+        const selectedAlbumIds = ['album001'];
+        const questions = generateQuizQuestions(selectedAlbumIds, mockSongsData, 1);
+
+        const question = questions[0];
+        expect(question.track).toBeDefined();
+        expect(question.album).toBeDefined();
+        expect(question.artist).toBeDefined();
+        expect(question.startTime).toBeDefined();
+        expect(typeof question.startTime).toBe('number');
+      });
+
+      it('楽曲の開始時間が正しく計算される', () => {
+        const selectedAlbumIds = ['album001'];
+        const questions = generateQuizQuestions(selectedAlbumIds, mockSongsData, 3);
+
+        for (const question of questions) {
+          const { track, startTime } = question;
+
+          if (track.midpointStart !== undefined) {
+            // midpointStartが指定されている場合はその値
+            expect(startTime).toBe(track.midpointStart);
+          } else if (track.duration !== undefined) {
+            // durationが指定されている場合は40%-60%の範囲
+            const min = Math.floor(track.duration * 0.4);
+            const max = Math.floor(track.duration * 0.6);
+            expect(startTime).toBeGreaterThanOrEqual(min);
+            expect(startTime).toBeLessThanOrEqual(max);
+          } else {
+            // デフォルトは90-150秒の範囲
+            expect(startTime).toBeGreaterThanOrEqual(90);
+            expect(startTime).toBeLessThanOrEqual(150);
+          }
+        }
+      });
+
+      it('複数のアルバムから均等に楽曲が選ばれる（ランダム性のテスト）', () => {
+        const selectedAlbumIds = ['album001', 'album002', 'album003'];
+
+        // ランダム性をテストするため、選ばれる楽曲の分布を確認
+        const albumCounts = { album001: 0, album002: 0, album003: 0 };
+
+        for (let i = 0; i < 50; i++) {
+          const questions = generateQuizQuestions(selectedAlbumIds, mockSongsData, 5);
+          for (const question of questions) {
+            const albumId = question.album.id;
+            albumCounts[albumId as keyof typeof albumCounts]++;
+          }
+        }
+
+        // 3つのアルバムすべてから楽曲が選ばれることを確認
+        expect(albumCounts.album001).toBeGreaterThan(0);
+        expect(albumCounts.album002).toBeGreaterThan(0);
+        expect(albumCounts.album003).toBeGreaterThan(0);
+      });
+
+      it('アルバムとアーティスト情報が正しく関連付けられる', () => {
+        const selectedAlbumIds = ['album001', 'album003'];
+        const questions = generateQuizQuestions(selectedAlbumIds, mockSongsData, 5);
+
+        for (const question of questions) {
+          const { track, album, artist } = question;
+
+          // アルバムに楽曲が含まれることを確認
+          const albumTrack = album.tracks.find(t => t.id === track.id);
+          expect(albumTrack).toBeDefined();
+
+          // アーティストにアルバムが含まれることを確認
+          const artistAlbum = artist.albums.find(a => a.id === album.id);
+          expect(artistAlbum).toBeDefined();
+        }
+      });
+    });
+
+    describe('generateQuizQuestionsFromAllSongs との比較', () => {
+      it('選択されたアルバムからの生成は、全楽曲からの生成よりも範囲が限定される', () => {
+        const selectedAlbumIds = ['album001'];
+        const selectedQuestions = generateQuizQuestions(selectedAlbumIds, mockSongsData, 10);
+        const allQuestions = generateQuizQuestionsFromAllSongs(mockSongsData, 10);
+
+        // 選択されたアルバムからの問題数は少ない（または同等）
+        expect(selectedQuestions.length).toBeLessThanOrEqual(allQuestions.length);
+
+        // 選択されたアルバムの楽曲のみ含まれる
+        const selectedTrackIds = selectedQuestions.map(q => q.track.id);
+        const allTrackIds = allQuestions.map(q => q.track.id);
+
+        for (const trackId of selectedTrackIds) {
+          expect(['track001', 'track002', 'track003']).toContain(trackId);
+        }
       });
     });
   });

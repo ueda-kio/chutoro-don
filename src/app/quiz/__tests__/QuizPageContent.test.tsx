@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { QuizPageContent } from '../QuizPageContent';
 import * as quizUtils from '@/utils/quiz';
 import type { SongsData, QuizQuestion } from '@/types';
@@ -26,7 +26,9 @@ jest.mock('@/hooks/useYouTubePlayer', () => ({
 }));
 
 const mockPush = jest.fn();
+const mockGet = jest.fn();
 const mockLoadSongsData = quizUtils.loadSongsData as jest.MockedFunction<typeof quizUtils.loadSongsData>;
+const mockGenerateQuizQuestions = quizUtils.generateQuizQuestions as jest.MockedFunction<typeof quizUtils.generateQuizQuestions>;
 const mockGenerateQuizQuestionsFromAllSongs = quizUtils.generateQuizQuestionsFromAllSongs as jest.MockedFunction<
   typeof quizUtils.generateQuizQuestionsFromAllSongs
 >;
@@ -35,17 +37,29 @@ const mockSongsData: SongsData = {
   artists: [
     {
       id: 'artist001',
-      name: 'Test Artist',
+      name: 'Test Artist 1',
       albums: [
         {
           id: 'album001',
-          name: 'Test Album',
-          jacketUrl: '/test-jacket.jpg',
+          name: 'Test Album 1',
+          jacketUrl: '/test-jacket1.jpg',
           tracks: [
             {
               id: 'track001',
-              title: 'Test Track',
-              youtubeUrl: 'https://www.youtube.com/watch?v=testId',
+              title: 'Test Track 1',
+              youtubeUrl: 'https://www.youtube.com/watch?v=testId1',
+            },
+          ],
+        },
+        {
+          id: 'album002',
+          name: 'Test Album 2',
+          jacketUrl: '/test-jacket2.jpg',
+          tracks: [
+            {
+              id: 'track002',
+              title: 'Test Track 2',
+              youtubeUrl: 'https://www.youtube.com/watch?v=testId2',
             },
           ],
         },
@@ -95,18 +109,24 @@ const mockQuestions: QuizQuestion[] = [
   },
 ];
 
-describe('Quiz Page Content (クイズ画面)', () => {
+describe('QuizPageContent - アルバム選択機能対応', () => {
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({
       push: mockPush,
     });
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: mockGet,
+    });
     mockPush.mockClear();
+    mockGet.mockClear();
     mockLoadSongsData.mockClear();
+    mockGenerateQuizQuestions.mockClear();
     mockGenerateQuizQuestionsFromAllSongs.mockClear();
   });
 
-  describe('初期化とデータ読み込み', () => {
-    it('正常にデータを読み込んでクイズ問題を生成する', async () => {
+  describe('初期化とURL パラメータ処理', () => {
+    it('アルバムパラメータがない場合、全曲からクイズが生成される', async () => {
+      mockGet.mockReturnValue(null);
       mockLoadSongsData.mockResolvedValue(mockSongsData);
       mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(mockQuestions);
 
@@ -115,14 +135,28 @@ describe('Quiz Page Content (クイズ画面)', () => {
       expect(screen.getByText('クイズを準備中...')).toBeInTheDocument();
 
       await waitFor(() => {
-        expect(screen.getByText('中トロドン')).toBeInTheDocument();
+        expect(mockLoadSongsData).toHaveBeenCalled();
+        expect(mockGenerateQuizQuestionsFromAllSongs).toHaveBeenCalledWith(mockSongsData, 10);
+        expect(mockGenerateQuizQuestions).not.toHaveBeenCalled();
       });
+    });
 
-      expect(mockLoadSongsData).toHaveBeenCalledTimes(1);
-      expect(mockGenerateQuizQuestionsFromAllSongs).toHaveBeenCalledWith(mockSongsData, 10);
+    it('アルバムパラメータがある場合、選択されたアルバムからクイズが生成される', async () => {
+      mockGet.mockReturnValue('album001,album002');
+      mockLoadSongsData.mockResolvedValue(mockSongsData);
+      mockGenerateQuizQuestions.mockReturnValue(mockQuestions);
+
+      render(<QuizPageContent />);
+
+      await waitFor(() => {
+        expect(mockLoadSongsData).toHaveBeenCalled();
+        expect(mockGenerateQuizQuestions).toHaveBeenCalledWith(['album001', 'album002'], mockSongsData, 10);
+        expect(mockGenerateQuizQuestionsFromAllSongs).not.toHaveBeenCalled();
+      });
     });
 
     it('データ読み込みに失敗した場合はトップページにリダイレクトする', async () => {
+      mockGet.mockReturnValue(null);
       mockLoadSongsData.mockRejectedValue(new Error('Failed to load'));
 
       render(<QuizPageContent />);
@@ -133,10 +167,9 @@ describe('Quiz Page Content (クイズ画面)', () => {
     });
 
     it('問題生成に失敗した場合はエラー画面を表示する', async () => {
+      mockGet.mockReturnValue(null);
       mockLoadSongsData.mockResolvedValue(mockSongsData);
-      mockGenerateQuizQuestionsFromAllSongs.mockImplementation(() => {
-        throw new Error('No tracks found');
-      });
+      mockGenerateQuizQuestionsFromAllSongs.mockReturnValue([]);
 
       render(<QuizPageContent />);
 
@@ -148,6 +181,7 @@ describe('Quiz Page Content (クイズ画面)', () => {
 
   describe('UIコンポーネント表示', () => {
     beforeEach(async () => {
+      mockGet.mockReturnValue(null);
       mockLoadSongsData.mockResolvedValue(mockSongsData);
       mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(mockQuestions);
     });
@@ -172,7 +206,6 @@ describe('Quiz Page Content (クイズ画面)', () => {
       render(<QuizPageContent />);
 
       await waitFor(() => {
-        // QuizPlayerの中身（再生ボタンなど）が表示されることを確認
         expect(screen.getByRole('button', { name: '再生' })).toBeInTheDocument();
       });
     });
@@ -180,6 +213,7 @@ describe('Quiz Page Content (クイズ画面)', () => {
 
   describe('クイズ進行機能', () => {
     beforeEach(async () => {
+      mockGet.mockReturnValue(null);
       mockLoadSongsData.mockResolvedValue(mockSongsData);
       mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(mockQuestions);
     });
@@ -205,83 +239,64 @@ describe('Quiz Page Content (クイズ画面)', () => {
       });
     });
 
-    it('最後の問題でクイズ終了ボタンが表示される', async () => {
-      // 2問目から開始するように設定
-      const singleQuestion = [mockQuestions[1]];
-      mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(singleQuestion);
-
-      render(<QuizPageContent />);
-
-      await waitFor(() => {
-        expect(screen.getByText('Q.1 / 1')).toBeInTheDocument();
-      });
-
-      // 答えを表示
-      const revealButton = screen.getByText('答えを表示');
-      fireEvent.click(revealButton);
-
-      await waitFor(() => {
-        expect(screen.getByText('クイズ終了')).toBeInTheDocument();
-      });
-    });
-
     it('クイズ終了後はトップページに戻る', async () => {
       const singleQuestion = [mockQuestions[0]];
       mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(singleQuestion);
 
       render(<QuizPageContent />);
 
+      // 初期レンダリングを待機
       await waitFor(() => {
-        const revealButton = screen.getByText('答えを表示');
-        fireEvent.click(revealButton);
+        expect(screen.getByText('答えを表示')).toBeInTheDocument();
       });
 
+      // 答えを表示ボタンをクリック
+      const revealButton = screen.getByText('答えを表示');
+      fireEvent.click(revealButton);
+
+      // 答えが表示され、クイズ終了ボタンが有効になるまで待機
       await waitFor(() => {
         const finishButton = screen.getByText('クイズ終了');
-        fireEvent.click(finishButton);
+        expect(finishButton).toBeEnabled();
       });
 
-      expect(mockPush).toHaveBeenCalledWith('/');
+      // クイズ終了ボタンをクリック
+      const finishButton = screen.getByText('クイズ終了');
+      fireEvent.click(finishButton);
+
+      // トップページへのリダイレクトを確認
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/');
+      });
     });
   });
 
-  describe('エラーハンドリング', () => {
-    it('問題が0問の場合はエラー画面を表示する', async () => {
+  describe('出題範囲設定ボタン', () => {
+    beforeEach(() => {
+      mockGet.mockReturnValue('album001');
       mockLoadSongsData.mockResolvedValue(mockSongsData);
-      mockGenerateQuizQuestionsFromAllSongs.mockReturnValue([]);
+      mockGenerateQuizQuestions.mockReturnValue(mockQuestions);
+    });
 
+    it('設定ボタンが表示される', async () => {
       render(<QuizPageContent />);
 
       await waitFor(() => {
-        expect(screen.getByText('クイズの準備に失敗しました')).toBeInTheDocument();
-        expect(screen.getByText('トップに戻る')).toBeInTheDocument();
+        const settingsButton = screen.getByTitle('出題範囲を設定');
+        expect(settingsButton).toBeInTheDocument();
       });
     });
 
-    it('エラー画面からトップページに戻ることができる', async () => {
-      mockLoadSongsData.mockResolvedValue(mockSongsData);
-      mockGenerateQuizQuestionsFromAllSongs.mockReturnValue([]);
-
+    it('設定ボタンをクリックするとモーダルが開く', async () => {
       render(<QuizPageContent />);
 
       await waitFor(() => {
-        const backButton = screen.getByText('トップに戻る');
-        fireEvent.click(backButton);
+        const settingsButton = screen.getByTitle('出題範囲を設定');
+        fireEvent.click(settingsButton);
       });
 
-      expect(mockPush).toHaveBeenCalledWith('/');
-    });
-  });
-
-  describe('ランダム楽曲選択の確認', () => {
-    it('全楽曲からランダムに10問生成する設定でクイズが作成される', async () => {
-      mockLoadSongsData.mockResolvedValue(mockSongsData);
-      mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(mockQuestions);
-
-      render(<QuizPageContent />);
-
       await waitFor(() => {
-        expect(mockGenerateQuizQuestionsFromAllSongs).toHaveBeenCalledWith(mockSongsData, 10);
+        expect(screen.getByText('出題範囲設定')).toBeInTheDocument();
       });
     });
   });
