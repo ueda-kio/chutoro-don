@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import '@testing-library/jest-dom';
 import { renderHook, act } from '@testing-library/react';
 import { useYouTubePlayer } from '../useYouTubePlayer';
@@ -17,7 +20,7 @@ const mockYT = {
   Player: jest.fn().mockImplementation((containerId, config) => {
     // onReady コールバックを即座に実行
     setTimeout(() => {
-      if (config.events && config.events.onReady) {
+      if (config.events?.onReady) {
         config.events.onReady();
       }
     }, 0);
@@ -54,6 +57,7 @@ describe('useYouTubePlayer Hook (YouTube Player制御)', () => {
       const { result } = renderHook(() => useYouTubePlayer());
 
       expect(result.current.isReady).toBe(false);
+      expect(result.current.isPlayerReady).toBe(false);
       expect(result.current.isPlaying).toBe(false);
     });
 
@@ -106,13 +110,19 @@ describe('useYouTubePlayer Hook (YouTube Player制御)', () => {
       (window as any).YT = mockYT;
       const { result } = renderHook(() => useYouTubePlayer());
 
+      // プレイヤーを初期化
       act(() => {
         result.current.initializePlayer('youtube-player');
       });
 
       // onReady コールバックの実行を待つ
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 10));
+        jest.advanceTimersByTime(10);
+      });
+
+      // プレイヤーが準備完了になるまで待つ
+      await act(async () => {
+        jest.advanceTimersByTime(100);
       });
 
       act(() => {
@@ -125,12 +135,18 @@ describe('useYouTubePlayer Hook (YouTube Player制御)', () => {
       });
     });
 
-    it('stopTrack で再生が停止される', () => {
+    it('stopTrack で再生が停止される', async () => {
       (window as any).YT = mockYT;
       const { result } = renderHook(() => useYouTubePlayer());
 
+      // プレイヤーを初期化
       act(() => {
         result.current.initializePlayer('youtube-player');
+      });
+
+      // onReady コールバックの実行を待つ
+      await act(async () => {
+        jest.advanceTimersByTime(10);
       });
 
       act(() => {
@@ -169,12 +185,18 @@ describe('useYouTubePlayer Hook (YouTube Player制御)', () => {
   });
 
   describe('メモリリーク対策', () => {
-    it('コンポーネントアンマウント時にリソースが適切に解放される', () => {
+    it('コンポーネントアンマウント時にリソースが適切に解放される', async () => {
       (window as any).YT = mockYT;
       const { result, unmount } = renderHook(() => useYouTubePlayer());
 
+      // プレイヤーを初期化
       act(() => {
         result.current.initializePlayer('youtube-player');
+      });
+
+      // onReady コールバックの実行を待つ
+      await act(async () => {
+        jest.advanceTimersByTime(10);
       });
 
       act(() => {
