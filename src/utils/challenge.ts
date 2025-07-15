@@ -47,20 +47,20 @@ export function calculatePlayDurationBonus(playDuration: number): number {
 
 /**
  * 時間に基づくボーナス点数を計算
- * 30秒以内: 減点なし
- * 30秒〜60秒: 徐々に減点
- * 60秒以上: 最大減点
+ * 10秒以内: 減点なし
+ * 10秒〜30秒: 徐々に減点
+ * 30秒以上: 最大減点
  */
 export function calculateTimeBonus(timeElapsed: number): number {
-  if (timeElapsed <= 30) {
-    return 0; // 30秒以内は減点なし
-  } else if (timeElapsed <= 60) {
-    // 30秒から60秒までは徐々に減点（最大-200点）
-    return Math.floor(((timeElapsed - 30) / 30) * -200);
-  } else {
-    // 60秒以上は最大減点
-    return -200;
+  if (timeElapsed <= 10) {
+    return 0; // 10秒以内は減点なし
   }
+  if (timeElapsed <= 30) {
+    // 10秒から30秒までは徐々に減点（最大-200点）
+    return Math.floor(((timeElapsed - 10) / 20) * -200);
+  }
+  // 30秒以上は最大減点
+  return -200;
 }
 
 /**
@@ -76,7 +76,7 @@ export function calculateQuestionScore(
   const timeBonus = calculateTimeBonus(timeElapsed);
   const playDurationBonus = calculatePlayDurationBonus(playDuration);
   const revealPenalty = wasRevealed ? -500 : 0;
-  
+
   const totalScore = Math.max(0, baseScore + timeBonus + playDurationBonus + revealPenalty);
 
   return {
@@ -116,9 +116,9 @@ export function calculateElapsedTime(startTime: number, endTime: number): number
 /**
  * スコアランクを取得
  */
-export function getScoreRank(totalScore: number, maxScore: number = 10000): string {
+export function getScoreRank(totalScore: number, maxScore = 10000) {
   const percentage = (totalScore / maxScore) * 100;
-  
+
   if (percentage >= 90) return 'S';
   if (percentage >= 80) return 'A';
   if (percentage >= 70) return 'B';
@@ -130,9 +130,9 @@ export function getScoreRank(totalScore: number, maxScore: number = 10000): stri
 /**
  * スコアに基づくメッセージを取得
  */
-export function getScoreMessage(totalScore: number, maxScore: number = 10000): string {
+export function getScoreMessage(totalScore: number, maxScore = 10000): string {
   const rank = getScoreRank(totalScore, maxScore);
-  
+
   switch (rank) {
     case 'S':
       return '完璧です！神の領域に到達しました！';

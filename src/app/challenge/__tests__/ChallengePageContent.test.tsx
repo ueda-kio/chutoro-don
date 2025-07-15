@@ -41,9 +41,13 @@ jest.mock('@/hooks/useYouTubePlayer', () => ({
 jest.mock('@/components/ChallengeQuizPlayer', () => ({
   ChallengeQuizPlayer: ({ onAnswerSubmit, onRevealAnswer, onNext, isLastQuestion }: any) => (
     <div data-testid="challenge-quiz-player">
-      <button onClick={() => onAnswerSubmit('テスト楽曲', 1)}>回答する</button>
-      <button onClick={() => onRevealAnswer(1)}>答えを表示</button>
-      <button onClick={onNext}>
+      <button type="button" onClick={() => onAnswerSubmit('テスト楽曲', 1)}>
+        回答する
+      </button>
+      <button type="button" onClick={() => onRevealAnswer(1)}>
+        答えを表示
+      </button>
+      <button type="button" onClick={onNext}>
         {isLastQuestion ? 'スコア確認' : '次の問題'}
       </button>
     </div>
@@ -61,7 +65,9 @@ const mockGenerateQuizQuestionsFromSelectedAlbums = quizUtils.generateQuizQuesti
 
 const mockGetHighPrecisionTime = challengeUtils.getHighPrecisionTime as jest.MockedFunction<typeof challengeUtils.getHighPrecisionTime>;
 const mockIsSongTitleMatch = challengeUtils.isSongTitleMatch as jest.MockedFunction<typeof challengeUtils.isSongTitleMatch>;
-const mockCalculateQuestionScore = challengeUtils.calculateQuestionScore as jest.MockedFunction<typeof challengeUtils.calculateQuestionScore>;
+const mockCalculateQuestionScore = challengeUtils.calculateQuestionScore as jest.MockedFunction<
+  typeof challengeUtils.calculateQuestionScore
+>;
 const mockCalculateTotalScore = challengeUtils.calculateTotalScore as jest.MockedFunction<typeof challengeUtils.calculateTotalScore>;
 
 const mockSongsData: SongsData = {

@@ -68,19 +68,19 @@ describe('チャレンジモード - ユーティリティ関数', () => {
   });
 
   describe('calculateTimeBonus', () => {
-    it('30秒以内の場合は減点なし', () => {
+    it('10秒以内の場合は減点なし', () => {
+      expect(calculateTimeBonus(5)).toBe(0);
       expect(calculateTimeBonus(10)).toBe(0);
-      expect(calculateTimeBonus(30)).toBe(0);
     });
 
-    it('30秒から60秒の場合は徐々に減点', () => {
-      expect(calculateTimeBonus(45)).toBe(-100); // 中間点
-      expect(calculateTimeBonus(60)).toBe(-200); // 最大減点
+    it('10秒から30秒の場合は徐々に減点', () => {
+      expect(calculateTimeBonus(20)).toBe(-100); // 中間点
+      expect(calculateTimeBonus(30)).toBe(-200); // 最大減点
     });
 
-    it('60秒以上の場合は最大減点', () => {
-      expect(calculateTimeBonus(90)).toBe(-200);
-      expect(calculateTimeBonus(120)).toBe(-200);
+    it('30秒以上の場合は最大減点', () => {
+      expect(calculateTimeBonus(31)).toBe(-200);
+      expect(calculateTimeBonus(60)).toBe(-200);
     });
   });
 
@@ -119,7 +119,7 @@ describe('チャレンジモード - ユーティリティ関数', () => {
         { questionIndex: 1, baseScore: 1000, timeBonus: -100, playDurationBonus: 150, revealPenalty: 0, totalScore: 1050, timeElapsed: 45, playDuration: 1.5, wasRevealed: false },
         { questionIndex: 2, baseScore: 1000, timeBonus: 0, playDurationBonus: 100, revealPenalty: -500, totalScore: 600, timeElapsed: 25, playDuration: 2, wasRevealed: true },
       ];
-      
+
       expect(calculateTotalScore(scores)).toBe(2850);
     });
 
