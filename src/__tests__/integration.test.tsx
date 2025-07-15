@@ -166,12 +166,18 @@ describe('中トロドン アプリケーション 統合テスト', () => {
       it('スタートボタンクリックでクイズ画面に遷移する', async () => {
         render(<HomePage />);
 
+        // のんびりモードを選択
+        await waitFor(() => {
+          const freeModeButton = screen.getByText('のんびりモード');
+          fireEvent.click(freeModeButton);
+        });
+
         await waitFor(() => {
           const startButton = screen.getByRole('button', { name: 'クイズ開始' });
           fireEvent.click(startButton);
 
           // 単一アルバムのため全アルバム選択となり、クエリパラメータなしで遷移
-          expect(mockPush).toHaveBeenCalledWith('/quiz');
+          expect(mockPush).toHaveBeenCalledWith('/quiz?mode=freeplay');
         });
       });
 
@@ -188,12 +194,18 @@ describe('中トロドン アプリケーション 統合テスト', () => {
           expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
         });
 
+        // のんびりモードを選択
+        await waitFor(() => {
+          const freeModeButton = screen.getByText('のんびりモード');
+          fireEvent.click(freeModeButton);
+        });
+
         await waitFor(() => {
           const startButton = screen.getByRole('button', { name: 'クイズ開始' });
           fireEvent.click(startButton);
 
           // 全アルバムが選択されている場合、クエリパラメータなしで遷移
-          expect(mockPush).toHaveBeenCalledWith('/quiz');
+          expect(mockPush).toHaveBeenCalledWith('/quiz?mode=freeplay');
         });
       });
     });

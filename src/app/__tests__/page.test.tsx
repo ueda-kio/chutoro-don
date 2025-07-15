@@ -551,6 +551,10 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
         expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
       });
 
+      // フリープレイモードを選択
+      const freeModeButton = screen.getByText('のんびりモード');
+      fireEvent.click(freeModeButton);
+
       // クイズ開始ボタンをクリック
       await waitFor(() => {
         const startButton = screen.getByText('クイズ開始');
@@ -564,6 +568,10 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
 
     it('アルバム未選択時にクイズ開始ボタンが無効になる', async () => {
       render(<HomePage />);
+
+      // フリープレイモードを選択
+      const freeModeButton = screen.getByText('のんびりモード');
+      fireEvent.click(freeModeButton);
 
       // モーダルを開いてすべて解除
       await waitFor(() => {
@@ -590,6 +598,44 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
 
       // 無効なボタンには適切なスタイルが適用されていることを確認
       expect(startButton).toHaveClass('bg-gray-400', 'cursor-not-allowed', 'text-gray-200');
+    });
+
+    it('モード未選択時にクイズ開始ボタンが無効になる', async () => {
+      render(<HomePage />);
+
+      await waitFor(() => {
+        expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
+      });
+
+      // モードを選択せずにクイズ開始ボタンを確認
+      const startButton = screen.getByText('クイズ開始');
+      expect(startButton).toBeDisabled();
+      expect(screen.getByText('プレイモードを選択してください')).toBeInTheDocument();
+    });
+
+    it('チャレンジモードを選択してクイズを開始できる', async () => {
+      render(<HomePage />);
+
+      await waitFor(() => {
+        expect(screen.getByText('2個のアルバムが選択されています')).toBeInTheDocument();
+      });
+
+      // チャレンジモードを選択
+      const challengeModeButton = screen.getByText('タイムアタック');
+      fireEvent.click(challengeModeButton);
+
+      // ボタンの表示が変わることを確認
+      expect(screen.getByText('タイムアタック開始')).toBeInTheDocument();
+
+      // クイズ開始ボタンをクリック
+      await waitFor(() => {
+        const startButton = screen.getByText('タイムアタック開始');
+        expect(startButton).toBeEnabled();
+        fireEvent.click(startButton);
+      });
+
+      // チャレンジ画面に遷移
+      expect(mockPush).toHaveBeenCalledWith('/challenge?mode=challenge');
     });
   });
 

@@ -35,3 +35,31 @@ export interface QuizSession {
   currentQuestionIndex: number;
   isAnswerRevealed: boolean;
 }
+
+// チャレンジモード用の型定義
+export type GameMode = 'freeplay' | 'challenge';
+
+export interface ChallengeScore {
+  questionIndex: number;
+  baseScore: number;
+  timeBonus: number;
+  playDurationBonus: number;
+  revealPenalty: number;
+  totalScore: number;
+  timeElapsed: number;
+  playDuration: number;
+  wasRevealed: boolean;
+}
+
+export interface ChallengeSession {
+  questions: QuizQuestion[];
+  currentQuestionIndex: number;
+  scores: ChallengeScore[];
+  startTime: number;
+  currentQuestionStartTime: number;
+  isGameCompleted: boolean;
+  totalScore: number;
+  userAnswer: string;
+  isAnswerCorrect: boolean;
+  isAnswerRevealed: boolean;
+}

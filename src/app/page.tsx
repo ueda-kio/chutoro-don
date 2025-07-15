@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import type { SongsData } from '@/types';
+import type { SongsData, GameMode } from '@/types';
 import { loadSongsData } from '@/utils/quiz';
 import { AlbumSelectorModal } from '@/components/Modal';
 
@@ -14,6 +14,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [defaultPlayDuration, setDefaultPlayDuration] = useState<number | null>(null);
+  const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -65,7 +66,16 @@ export default function HomePage() {
     setIsModalOpen(false);
   };
 
+  const handleModeSelect = (mode: GameMode) => {
+    setSelectedMode(mode);
+  };
+
   const handleStartQuiz = () => {
+    if (!selectedMode) {
+      alert('プレイモードを選択してください。');
+      return;
+    }
+
     if (selectedAlbumIds.length === 0) {
       alert('アルバムを1つ以上選択してください。');
       return;
@@ -76,6 +86,9 @@ export default function HomePage() {
 
     // URLパラメータを構築
     const params = new URLSearchParams();
+    
+    // ゲームモードのパラメータ
+    params.set('mode', selectedMode);
     
     // アルバム選択のパラメータ
     if (selectedAlbumIds.length !== totalAlbums) {
@@ -89,7 +102,12 @@ export default function HomePage() {
     
     // クイズ画面に遷移
     const queryString = params.toString();
-    router.push(`/quiz${queryString ? `?${queryString}` : ''}`);
+    
+    if (selectedMode === 'challenge') {
+      router.push(`/challenge${queryString ? `?${queryString}` : ''}`);
+    } else {
+      router.push(`/quiz${queryString ? `?${queryString}` : ''}`);
+    }
   };
 
   if (loading) {
@@ -126,6 +144,65 @@ export default function HomePage() {
           <p className="text-2xl text-gray-600 mb-4">曲の中トロを聴いて曲名を当てよう</p>
         </div>
 
+        {/* プレイモード選択エリア */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">プレイモード</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* のんびりモード */}
+            {/* biome-ignore lint/a11y/useKeyWithClickEvents: カード型UIのため、divでの実装を選択 */}
+            <div
+              onClick={() => handleModeSelect('freeplay')}
+              className={`p-6 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md ${
+                selectedMode === 'freeplay'
+                  ? 'border-primary-600 bg-primary-50'
+                  : 'border-gray-300 hover:border-gray-400'
+              }`}
+            >
+              <div className="flex items-center mb-4">
+                <div className={`w-4 h-4 rounded-full mr-3 ${
+                  selectedMode === 'freeplay' ? 'bg-primary-600' : 'bg-gray-300'
+                }`} />
+                <h3 className="text-xl font-semibold text-gray-900">のんびりモード</h3>
+              </div>
+              <p className="text-gray-600 mb-4">
+                答えを表示してゆっくり楽しめる従来のクイズスタイル
+              </p>
+              <ul className="text-sm text-gray-500 space-y-1">
+                <li>• 答えを表示してゆっくり楽しめる</li>
+                <li>• 問題数は自由に選択可能</li>
+                <li>• 時間制限なし</li>
+              </ul>
+            </div>
+
+            {/* タイムアタック */}
+            {/* biome-ignore lint/a11y/useKeyWithClickEvents: カード型UIのため、divでの実装を選択 */}
+            <div
+              onClick={() => handleModeSelect('challenge')}
+              className={`p-6 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md ${
+                selectedMode === 'challenge'
+                  ? 'border-red-600 bg-red-50'
+                  : 'border-gray-300 hover:border-gray-400'
+              }`}
+            >
+              <div className="flex items-center mb-4">
+                <div className={`w-4 h-4 rounded-full mr-3 ${
+                  selectedMode === 'challenge' ? 'bg-red-600' : 'bg-gray-300'
+                }`} />
+                <h3 className="text-xl font-semibold text-gray-900">タイムアタック</h3>
+              </div>
+              <p className="text-gray-600 mb-4">
+                テキスト入力で回答し、時間とアクションでスコアを競う
+              </p>
+              <ul className="text-sm text-gray-500 space-y-1">
+                <li>• 全10問固定</li>
+                <li>• テキスト入力で回答</li>
+                <li>• スコアシステム搭載</li>
+                <li>• 時間と再生時間でボーナス</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         {/* 出題範囲設定エリア */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -157,15 +234,22 @@ export default function HomePage() {
           <button
             type="button"
             onClick={handleStartQuiz}
-            disabled={selectedAlbumIds.length === 0}
+            disabled={selectedAlbumIds.length === 0 || !selectedMode}
             className={`px-16 py-6 text-2xl font-bold rounded-lg transform transition hover:scale-105 shadow-lg ${
-              selectedAlbumIds.length === 0
+              selectedAlbumIds.length === 0 || !selectedMode
                 ? 'bg-gray-400 cursor-not-allowed text-gray-200'
-                : 'bg-primary-600 hover:bg-primary-700 text-white'
+                : selectedMode === 'challenge' 
+                  ? 'bg-red-600 hover:bg-red-700 text-white'
+                  : 'bg-primary-600 hover:bg-primary-700 text-white'
             }`}
           >
-            クイズ開始
+            {selectedMode === 'challenge' ? 'タイムアタック開始' : 'クイズ開始'}
           </button>
+          {(selectedAlbumIds.length === 0 || !selectedMode) && (
+            <p className="text-sm text-gray-500 mt-2">
+              {!selectedMode ? 'プレイモードを選択してください' : '出題範囲を設定してください'}
+            </p>
+          )}
         </div>
 
         {/* 出題範囲設定モーダル */}

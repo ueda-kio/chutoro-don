@@ -90,6 +90,14 @@ export function generateQuizQuestionsFromAllSongs(
   }));
 }
 
+export function generateQuizQuestionsFromSelectedAlbums(
+  songsData: SongsData,
+  selectedAlbumIds: string[],
+  questionCount = 10
+): QuizQuestion[] {
+  return generateQuizQuestions(selectedAlbumIds, songsData, questionCount);
+}
+
 export function extractYouTubeVideoId(url: string): string | null {
   const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
   const match = url.match(regex);
