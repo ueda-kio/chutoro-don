@@ -180,34 +180,36 @@ describe('チャレンジモード - ユーティリティ関数', () => {
 
   describe('getScoreRank', () => {
     it('スコアに応じて正しいランクを返す', () => {
-      expect(getScoreRank(15500)).toBe('SS'); // 最高ランク
-      expect(getScoreRank(14000)).toBe('S');  // 優秀
-      expect(getScoreRank(12500)).toBe('A');  // 良好
-      expect(getScoreRank(9000)).toBe('B');   // 普通
-      expect(getScoreRank(7000)).toBe('C');   // 要改善
-      expect(getScoreRank(5000)).toBe('D');   // 要練習
-      expect(getScoreRank(4000)).toBe('F');   // 要改善
+      expect(getScoreRank(15500)).toBe('SS'); // 最高ランク（14000以上）
+      expect(getScoreRank(14000)).toBe('SS');  // SS（14000以上）
+      expect(getScoreRank(12500)).toBe('S');  // S（12500以上）
+      expect(getScoreRank(10500)).toBe('A');   // A（10500以上）
+      expect(getScoreRank(8000)).toBe('B');   // B（8000以上）
+      expect(getScoreRank(6000)).toBe('C');   // C（6000以上）
+      expect(getScoreRank(4500)).toBe('D');   // D（4500以上）
+      expect(getScoreRank(4000)).toBe('F');   // F（4500未満）
     });
 
     it('境界値で正しく判定する', () => {
-      expect(getScoreRank(15499)).toBe('S');  // SS未満
-      expect(getScoreRank(13999)).toBe('A');  // S未満
-      expect(getScoreRank(12499)).toBe('B');  // A未満
-      expect(getScoreRank(8999)).toBe('C');   // B未満
-      expect(getScoreRank(6999)).toBe('D');   // C未満
-      expect(getScoreRank(4999)).toBe('F');   // D未満
+      expect(getScoreRank(13999)).toBe('S');  // SS未満
+      expect(getScoreRank(12499)).toBe('A');  // S未満
+      expect(getScoreRank(10499)).toBe('B');  // A未満
+      expect(getScoreRank(7999)).toBe('C');   // B未満
+      expect(getScoreRank(5999)).toBe('D');   // C未満
+      expect(getScoreRank(4499)).toBe('F');   // D未満
     });
   });
 
   describe('getScoreMessage', () => {
     it('ランクに応じて適切なメッセージを返す', () => {
-      expect(getScoreMessage(15500)).toContain('完璧');
-      expect(getScoreMessage(14000)).toContain('素晴らしい');
-      expect(getScoreMessage(12500)).toContain('よくできました');
-      expect(getScoreMessage(9000)).toContain('もう少し');
-      expect(getScoreMessage(7000)).toContain('惜しい');
-      expect(getScoreMessage(5000)).toContain('まだまだ');
-      expect(getScoreMessage(4000)).toContain('お疲れ様');
+      expect(getScoreMessage(15500)).toContain('完璧'); // SS
+      expect(getScoreMessage(14000)).toContain('完璧'); // SS
+      expect(getScoreMessage(12500)).toContain('素晴らしい'); // S
+      expect(getScoreMessage(10500)).toContain('よくできました'); // A
+      expect(getScoreMessage(8000)).toContain('もう少し'); // B
+      expect(getScoreMessage(6000)).toContain('惜しい'); // C
+      expect(getScoreMessage(4500)).toContain('まだまだ'); // D
+      expect(getScoreMessage(4000)).toContain('お疲れ様'); // F
     });
   });
 

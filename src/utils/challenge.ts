@@ -125,12 +125,12 @@ export function getScoreRank(totalScore: number) {
   // ランクB:  9000点  (1000+0+100)*8 + (1000+0+100-1000)*2 = 1100*8 + 100*2 = 8800 + 200 = 9000
   // ランクC:  7000点  (1000+0+100)*6 + (1000+0+100-1000)*4 = 1100*6 + 100*4 = 6600 + 400 = 7000
 
-  if (totalScore >= 15500) return 'SS'; // 神の領域
-  if (totalScore >= 14000) return 'S';  // 素晴らしい
-  if (totalScore >= 12500) return 'A';  // 上級者
-  if (totalScore >= 9000) return 'B';   // 良好
-  if (totalScore >= 7000) return 'C';   // 普通
-  if (totalScore >= 5000) return 'D';   // 要練習
+  if (totalScore >= 14000) return 'SS'; // 神の領域
+  if (totalScore >= 12500) return 'S';  // 素晴らしい
+  if (totalScore >= 10500) return 'A';  // 上級者
+  if (totalScore >= 8000) return 'B';   // 良好
+  if (totalScore >= 6000) return 'C';   // 普通
+  if (totalScore >= 4500) return 'D';   // 要練習
   return 'F'; // 要改善
 }
 
