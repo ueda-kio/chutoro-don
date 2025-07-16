@@ -203,7 +203,7 @@ describe('チャレンジモード 統合テスト', () => {
 
         await waitFor(() => {
           expect(screen.getByText('経過時間')).toBeInTheDocument();
-          expect(screen.getByText('現在のスコア')).toBeInTheDocument();
+          expect(screen.getAllByText('現在のスコア')).toHaveLength(2);
         });
       });
 
@@ -222,7 +222,7 @@ describe('チャレンジモード 統合テスト', () => {
         await waitFor(() => {
           expect(screen.getByLabelText('楽曲名を入力してください')).toBeInTheDocument();
           expect(screen.getByText('回答する')).toBeInTheDocument();
-          expect(screen.getByText('答えを表示 (-500pt)')).toBeInTheDocument();
+          expect(screen.getByText('答えを表示 (-1000pt)')).toBeInTheDocument();
         });
       });
     });
@@ -232,11 +232,11 @@ describe('チャレンジモード 統合テスト', () => {
         render(<ChallengePageContent />);
 
         await waitFor(() => {
-          expect(screen.getByText('1秒 (+200pt)')).toBeInTheDocument();
-          expect(screen.getByText('1.5秒 (+150pt)')).toBeInTheDocument();
+          expect(screen.getByText('1秒 (+500pt)')).toBeInTheDocument();
+          expect(screen.getByText('1.5秒 (+300pt)')).toBeInTheDocument();
           expect(screen.getByText('2秒 (+100pt)')).toBeInTheDocument();
-          expect(screen.getByText('3秒 (+50pt)')).toBeInTheDocument();
-          expect(screen.getByText('5秒 (+0pt)')).toBeInTheDocument();
+          expect(screen.getByText('3秒 (+0pt)')).toBeInTheDocument();
+          expect(screen.getByText('5秒 (-100pt)')).toBeInTheDocument();
         });
       });
 
@@ -244,7 +244,7 @@ describe('チャレンジモード 統合テスト', () => {
         render(<ChallengePageContent />);
 
         await waitFor(() => {
-          expect(screen.getByText('答えを表示 (-500pt)')).toBeInTheDocument();
+          expect(screen.getByText('答えを表示 (-1000pt)')).toBeInTheDocument();
         });
       });
     });
@@ -257,7 +257,6 @@ describe('チャレンジモード 統合テスト', () => {
         (useSearchParams as jest.Mock).mockReturnValue({
           get: jest.fn().mockImplementation((key) => {
             if (key === 'totalScore') return '8500';
-            if (key === 'maxScore') return '10000';
             if (key === 'scores') return JSON.stringify([
               {
                 questionIndex: 0,
@@ -280,7 +279,7 @@ describe('チャレンジモード 統合テスト', () => {
         await waitFor(() => {
           expect(screen.getByText('最終結果')).toBeInTheDocument();
           expect(screen.getByText('8,500')).toBeInTheDocument();
-          expect(screen.getByText('/ 10,000 点')).toBeInTheDocument();
+          expect(screen.getByText('点')).toBeInTheDocument();
         });
       });
 
@@ -288,7 +287,6 @@ describe('チャレンジモード 統合テスト', () => {
         (useSearchParams as jest.Mock).mockReturnValue({
           get: jest.fn().mockImplementation((key) => {
             if (key === 'totalScore') return '8500';
-            if (key === 'maxScore') return '10000';
             return null;
           }),
         });
@@ -296,7 +294,7 @@ describe('チャレンジモード 統合テスト', () => {
         render(<ChallengeResultPageContent />);
 
         await waitFor(() => {
-          expect(screen.getByText('ランク A')).toBeInTheDocument();
+          expect(screen.getByText('ランク C')).toBeInTheDocument();
         });
       });
 
@@ -304,7 +302,6 @@ describe('チャレンジモード 統合テスト', () => {
         (useSearchParams as jest.Mock).mockReturnValue({
           get: jest.fn().mockImplementation((key) => {
             if (key === 'totalScore') return '1200';
-            if (key === 'maxScore') return '10000';
             if (key === 'scores') return JSON.stringify([
               {
                 questionIndex: 0,

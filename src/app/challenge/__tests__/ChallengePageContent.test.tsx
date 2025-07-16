@@ -64,6 +64,7 @@ const mockGenerateQuizQuestionsFromSelectedAlbums = quizUtils.generateQuizQuesti
 >;
 
 const mockGetHighPrecisionTime = challengeUtils.getHighPrecisionTime as jest.MockedFunction<typeof challengeUtils.getHighPrecisionTime>;
+const mockCalculateElapsedTime = challengeUtils.calculateElapsedTime as jest.MockedFunction<typeof challengeUtils.calculateElapsedTime>;
 const mockIsSongTitleMatch = challengeUtils.isSongTitleMatch as jest.MockedFunction<typeof challengeUtils.isSongTitleMatch>;
 const mockCalculateQuestionScore = challengeUtils.calculateQuestionScore as jest.MockedFunction<
   typeof challengeUtils.calculateQuestionScore
@@ -130,6 +131,7 @@ describe('ChallengePageContent コンポーネント', () => {
     mockGenerateQuizQuestionsFromAllSongs.mockClear();
     mockGenerateQuizQuestionsFromSelectedAlbums.mockClear();
     mockGetHighPrecisionTime.mockClear();
+    mockCalculateElapsedTime.mockClear();
     mockIsSongTitleMatch.mockClear();
     mockCalculateQuestionScore.mockClear();
     mockCalculateTotalScore.mockClear();
@@ -138,6 +140,7 @@ describe('ChallengePageContent コンポーネント', () => {
     mockLoadSongsData.mockResolvedValue(mockSongsData);
     mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(mockQuestions);
     mockGetHighPrecisionTime.mockReturnValue(1000);
+    mockCalculateElapsedTime.mockReturnValue(30);
     mockIsSongTitleMatch.mockReturnValue(true);
     mockCalculateQuestionScore.mockReturnValue({
       questionIndex: 0,
@@ -164,6 +167,8 @@ describe('ChallengePageContent コンポーネント', () => {
     });
 
     it('特定のアルバムが選択されている場合、そのアルバムから問題を生成する', async () => {
+      mockGenerateQuizQuestionsFromSelectedAlbums.mockReturnValue(mockQuestions);
+      
       (useSearchParams as jest.Mock).mockReturnValue({
         get: jest.fn().mockImplementation((key) => {
           if (key === 'albums') return 'album001';
@@ -253,8 +258,11 @@ describe('ChallengePageContent コンポーネント', () => {
       expect(mockCalculateQuestionScore).toHaveBeenCalled();
       expect(mockCalculateTotalScore).toHaveBeenCalled();
 
-      // 1.5秒後に次の問題に進む
+      // 1.5秒後に次の問題に進む（最後の問題なので結果画面に遷移）
       jest.advanceTimersByTime(1500);
+      
+      // さらに1秒後にスコア画面に遷移
+      jest.advanceTimersByTime(1000);
 
       await waitFor(() => {
         // 最後の問題なので、スコア画面に遷移する
@@ -326,13 +334,11 @@ describe('ChallengePageContent コンポーネント', () => {
       const submitButton = screen.getByText('回答する');
       fireEvent.click(submitButton);
 
-      // 次の問題に進む処理を待つ
+      // 次の問題に進む処理を待つ（1.5秒後）
       jest.advanceTimersByTime(1500);
-
-      await waitFor(() => {
-        // スコア画面に遷移する処理を待つ
-        jest.advanceTimersByTime(1000);
-      });
+      
+      // スコア画面に遷移する処理を待つ（さらに1秒後）
+      jest.advanceTimersByTime(1000);
 
       await waitFor(() => {
         expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/challenge/result'));

@@ -454,6 +454,12 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
     it('アルバムが選択されている場合、クイズ開始ボタンが活性化される', async () => {
       render(<HomePage />);
 
+      // のんびりモードを選択
+      await waitFor(() => {
+        const freeModeButton = screen.getByText('のんびりモード');
+        fireEvent.click(freeModeButton);
+      });
+
       await waitFor(() => {
         const startButton = screen.getByText('クイズ開始');
         expect(startButton).not.toBeDisabled();
@@ -497,12 +503,18 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
     it('クイズ開始ボタンをクリックすると適切なパラメータでクイズ画面に遷移する', async () => {
       render(<HomePage />);
 
+      // のんびりモードを選択
+      await waitFor(() => {
+        const freeModeButton = screen.getByText('のんびりモード');
+        fireEvent.click(freeModeButton);
+      });
+
       await waitFor(() => {
         const startButton = screen.getByText('クイズ開始');
         fireEvent.click(startButton);
       });
 
-      expect(mockPush).toHaveBeenCalledWith('/quiz?albums=album001%2Calbum002');
+      expect(mockPush).toHaveBeenCalledWith('/quiz?mode=freeplay&albums=album001%2Calbum002');
     });
 
     it('すべてのアルバムが選択されている場合、クエリパラメータなしでクイズ画面に遷移する', async () => {
@@ -562,16 +574,18 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
         fireEvent.click(startButton);
       });
 
-      // すべてのアルバムが選択されているので、クエリパラメータなしで遷移
-      expect(mockPush).toHaveBeenCalledWith('/quiz');
+      // すべてのアルバムが選択されているので、アルバムパラメータなしで遷移
+      expect(mockPush).toHaveBeenCalledWith('/quiz?mode=freeplay');
     });
 
     it('アルバム未選択時にクイズ開始ボタンが無効になる', async () => {
       render(<HomePage />);
 
       // フリープレイモードを選択
-      const freeModeButton = screen.getByText('のんびりモード');
-      fireEvent.click(freeModeButton);
+      await waitFor(() => {
+        const freeModeButton = screen.getByText('のんびりモード');
+        fireEvent.click(freeModeButton);
+      });
 
       // モーダルを開いてすべて解除
       await waitFor(() => {
@@ -635,7 +649,7 @@ describe('Home Page (トップ画面) - アルバム選択機能', () => {
       });
 
       // チャレンジ画面に遷移
-      expect(mockPush).toHaveBeenCalledWith('/challenge?mode=challenge');
+      expect(mockPush).toHaveBeenCalledWith('/challenge?mode=challenge&albums=album001%2Calbum002');
     });
   });
 

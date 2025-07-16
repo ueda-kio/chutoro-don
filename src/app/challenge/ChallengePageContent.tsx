@@ -179,7 +179,6 @@ export function ChallengePageContent() {
       setTimeout(() => {
         const params = new URLSearchParams();
         params.set('totalScore', challengeSession.totalScore.toString());
-        params.set('maxScore', '10000');
         params.set('scores', JSON.stringify(challengeSession.scores));
         router.push(`/challenge/result?${params.toString()}`);
       }, 1000);

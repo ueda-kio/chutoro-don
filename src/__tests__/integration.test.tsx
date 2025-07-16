@@ -100,13 +100,13 @@ const mockQuestions: QuizQuestion[] = [
     },
     album: {
       id: 'album001',
-      name: 'テストアルバム',
-      jacketUrl: '/test-jacket.jpg',
+      name: 'テストアルバム1',
+      jacketUrl: '/test-jacket1.jpg',
       tracks: [],
     },
     artist: {
       id: 'artist001',
-      name: 'テストアーティスト',
+      name: 'テストアーティスト1',
       albums: [],
     },
     startTime: 120,
@@ -291,16 +291,26 @@ describe('中トロドン アプリケーション 統合テスト', () => {
 
         render(<QuizPageContent />);
 
+        // 初期レンダリングを待機
         await waitFor(() => {
-          const revealButton = screen.getByText('答えを表示');
-          fireEvent.click(revealButton);
+          expect(screen.getByText('答えを表示')).toBeInTheDocument();
         });
 
+        // 答えを表示ボタンをクリック
+        const revealButton = screen.getByText('答えを表示');
+        fireEvent.click(revealButton);
+
+        // 答えが表示され、クイズ終了ボタンが有効になるまで待機
         await waitFor(() => {
           const finishButton = screen.getByText('クイズ終了');
-          fireEvent.click(finishButton);
+          expect(finishButton).toBeEnabled();
         });
 
+        // クイズ終了ボタンをクリック
+        const finishButton = screen.getByText('クイズ終了');
+        fireEvent.click(finishButton);
+
+        // トップページへのリダイレクトを確認
         await waitFor(() => {
           expect(mockPush).toHaveBeenCalledWith('/');
         });
@@ -356,7 +366,7 @@ describe('中トロドン アプリケーション 統合テスト', () => {
       (useSearchParams as jest.Mock).mockReturnValue({
         get: jest.fn().mockReturnValue(null),
       });
-      mockLoadSongsData.mockResolvedValue(mockSongsData);
+      mockLoadSongsData.mockResolvedValue(mockMultipleAlbumsSongsData);
       mockGenerateQuizQuestionsFromAllSongs.mockReturnValue(mockQuestions);
     });
 
@@ -364,16 +374,20 @@ describe('中トロドン アプリケーション 統合テスト', () => {
       it('答えを表示ボタンクリックで解答エリアが表示される', async () => {
         render(<QuizPageContent />);
 
+        // 初期化完了を待つ
         await waitFor(() => {
-          const revealButton = screen.getByText('答えを表示');
-          fireEvent.click(revealButton);
+          expect(screen.getByText('答えを表示')).toBeInTheDocument();
         });
 
+        const revealButton = screen.getByText('答えを表示');
+        fireEvent.click(revealButton);
+
+        // 解答エリアが表示されるまで待つ
         await waitFor(() => {
           expect(screen.getByText('テスト楽曲1')).toBeInTheDocument();
-          expect(screen.getByText('テストアーティスト')).toBeInTheDocument();
-          expect(screen.getByText('テストアルバム')).toBeInTheDocument();
-        });
+          expect(screen.getByText('テストアーティスト1')).toBeInTheDocument();
+          expect(screen.getByText('テストアルバム1')).toBeInTheDocument();
+        }, { timeout: 3000 });
       });
 
       it('解答表示後に次へボタンが有効化される', async () => {
@@ -405,7 +419,7 @@ describe('中トロドン アプリケーション 統合テスト', () => {
         });
 
         await waitFor(() => {
-          const albumImage = screen.getByAltText('テストアルバム');
+          const albumImage = screen.getByAltText('テストアルバム1');
           expect(albumImage).toBeInTheDocument();
         });
       });

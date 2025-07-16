@@ -31,15 +31,15 @@ export function isSongTitleMatch(userAnswer: string, correctTitle: string): bool
 export function calculatePlayDurationBonus(playDuration: number): number {
   switch (playDuration) {
     case 1:
-      return 200;
+      return 500;   // SS ランク用
     case 1.5:
-      return 150;
+      return 300;   // S/A ランク用
     case 2:
-      return 100;
+      return 100;   // A/B/C ランク用
     case 3:
-      return 50;
+      return 0;     // C ランク用
     case 5:
-      return 0;
+      return -100;  // ペナルティ
     default:
       return 0;
   }
@@ -47,20 +47,22 @@ export function calculatePlayDurationBonus(playDuration: number): number {
 
 /**
  * 時間に基づくボーナス点数を計算
- * 10秒以内: 減点なし
- * 10秒〜30秒: 徐々に減点
- * 30秒以上: 最大減点
  */
 export function calculateTimeBonus(timeElapsed: number): number {
   if (timeElapsed <= 10) {
-    return 0; // 10秒以内は減点なし
+    return 200; // SS ランク用：10秒以内でボーナス
+  }
+  if (timeElapsed <= 15) {
+    return 100; // S/A ランク用：15秒以内でボーナス
+  }
+  if (timeElapsed <= 20) {
+    return 0;   // B/C ランク用：20秒以内は減点なし
   }
   if (timeElapsed <= 30) {
-    // 10秒から30秒までは徐々に減点（最大-200点）
-    return Math.floor(((timeElapsed - 10) / 20) * -200);
+    return -100; // 20-30秒は軽い減点
   }
-  // 30秒以上は最大減点
-  return -200;
+  // 30秒以上は大きな減点
+  return -300;
 }
 
 /**
@@ -75,7 +77,7 @@ export function calculateQuestionScore(
   const baseScore = 1000;
   const timeBonus = calculateTimeBonus(timeElapsed);
   const playDurationBonus = calculatePlayDurationBonus(playDuration);
-  const revealPenalty = wasRevealed ? -500 : 0;
+  const revealPenalty = wasRevealed ? -1000 : 0; // ペナルティを増加
 
   const totalScore = Math.max(0, baseScore + timeBonus + playDurationBonus + revealPenalty);
 
@@ -116,36 +118,43 @@ export function calculateElapsedTime(startTime: number, endTime: number): number
 /**
  * スコアランクを取得
  */
-export function getScoreRank(totalScore: number, maxScore = 10000) {
-  const percentage = (totalScore / maxScore) * 100;
+export function getScoreRank(totalScore: number) {
+  // ランクSS: 15500点 (1000+200+500)*5 + (1000+100+300)*5 = 1700*5 + 1400*5 = 8500 + 7000 = 15500
+  // ランクS:  14000点 (1000+100+300)*10 = 1400*10
+  // ランクA:  12500点 (1000+100+300)*5 + (1000+0+100)*5 = 1400*5 + 1100*5 = 7000 + 5500 = 12500
+  // ランクB:  9000点  (1000+0+100)*8 + (1000+0+100-1000)*2 = 1100*8 + 100*2 = 8800 + 200 = 9000
+  // ランクC:  7000点  (1000+0+100)*6 + (1000+0+100-1000)*4 = 1100*6 + 100*4 = 6600 + 400 = 7000
 
-  if (percentage >= 90) return 'S';
-  if (percentage >= 80) return 'A';
-  if (percentage >= 70) return 'B';
-  if (percentage >= 60) return 'C';
-  if (percentage >= 50) return 'D';
-  return 'F';
+  if (totalScore >= 15500) return 'SS'; // 神の領域
+  if (totalScore >= 14000) return 'S';  // 素晴らしい
+  if (totalScore >= 12500) return 'A';  // 上級者
+  if (totalScore >= 9000) return 'B';   // 良好
+  if (totalScore >= 7000) return 'C';   // 普通
+  if (totalScore >= 5000) return 'D';   // 要練習
+  return 'F'; // 要改善
 }
 
 /**
  * スコアに基づくメッセージを取得
  */
-export function getScoreMessage(totalScore: number, maxScore = 10000): string {
-  const rank = getScoreRank(totalScore, maxScore);
+export function getScoreMessage(totalScore: number): string {
+  const rank = getScoreRank(totalScore);
 
   switch (rank) {
-    case 'S':
+    case 'SS':
       return '完璧です！神の領域に到達しました！';
-    case 'A':
+    case 'S':
       return '素晴らしい！かなりの上級者ですね！';
-    case 'B':
+    case 'A':
       return 'よくできました！さらなる高みを目指しましょう！';
-    case 'C':
+    case 'B':
       return 'もう少し！練習すればもっと上達できます！';
-    case 'D':
+    case 'C':
       return '惜しい！基礎を固めてもう一度チャレンジしましょう！';
-    case 'F':
+    case 'D':
       return 'まだまだ！諦めずに頑張りましょう！';
+    case 'F':
+      return 'お疲れ様でした！';
     default:
       return 'お疲れ様でした！';
   }

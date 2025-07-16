@@ -120,7 +120,7 @@ describe('ChallengeQuizPlayer コンポーネント', () => {
       );
 
       expect(screen.getByLabelText('再生時間')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('1秒 (+200pt)')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('1秒 (+500pt)')).toBeInTheDocument();
     });
 
     it('回答入力フォームが表示される', () => {
@@ -141,7 +141,7 @@ describe('ChallengeQuizPlayer コンポーネント', () => {
 
       expect(screen.getByLabelText('楽曲名を入力してください')).toBeInTheDocument();
       expect(screen.getByText('回答する')).toBeInTheDocument();
-      expect(screen.getByText('答えを表示 (-500pt)')).toBeInTheDocument();
+      expect(screen.getByText('答えを表示 (-1000pt)')).toBeInTheDocument();
     });
 
     it('スコア表示のボーナス情報が正しく表示される', () => {
@@ -160,11 +160,11 @@ describe('ChallengeQuizPlayer コンポーネント', () => {
         />
       );
 
-      expect(screen.getByText('1秒 (+200pt)')).toBeInTheDocument();
-      expect(screen.getByText('1.5秒 (+150pt)')).toBeInTheDocument();
+      expect(screen.getByText('1秒 (+500pt)')).toBeInTheDocument();
+      expect(screen.getByText('1.5秒 (+300pt)')).toBeInTheDocument();
       expect(screen.getByText('2秒 (+100pt)')).toBeInTheDocument();
-      expect(screen.getByText('3秒 (+50pt)')).toBeInTheDocument();
-      expect(screen.getByText('5秒 (+0pt)')).toBeInTheDocument();
+      expect(screen.getByText('3秒 (+0pt)')).toBeInTheDocument();
+      expect(screen.getByText('5秒 (-100pt)')).toBeInTheDocument();
     });
   });
 
@@ -410,7 +410,7 @@ describe('ChallengeQuizPlayer コンポーネント', () => {
         />
       );
 
-      const revealButton = screen.getByText('答えを表示 (-500pt)');
+      const revealButton = screen.getByText('答えを表示 (-1000pt)');
       fireEvent.click(revealButton);
 
       expect(mockOnRevealAnswer).toHaveBeenCalledWith(1);
@@ -441,7 +441,7 @@ describe('ChallengeQuizPlayer コンポーネント', () => {
       fireEvent.click(playButton);
 
       // 答えを表示
-      const revealButton = screen.getByText('答えを表示 (-500pt)');
+      const revealButton = screen.getByText('答えを表示 (-1000pt)');
       fireEvent.click(revealButton);
 
       // 実際に再生された時間（3秒）がスコア計算に使用される
@@ -464,7 +464,7 @@ describe('ChallengeQuizPlayer コンポーネント', () => {
         />
       );
 
-      const revealButton = screen.getByText('答えを表示 (-500pt)');
+      const revealButton = screen.getByText('答えを表示 (-1000pt)');
       expect(revealButton).toBeDisabled();
     });
   });
@@ -652,7 +652,7 @@ describe('ChallengeQuizPlayer コンポーネント', () => {
         />
       );
 
-      expect(screen.getByDisplayValue('1秒 (+200pt)')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('1秒 (+500pt)')).toBeInTheDocument();
     });
   });
 });

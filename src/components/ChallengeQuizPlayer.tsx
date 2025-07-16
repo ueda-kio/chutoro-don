@@ -179,11 +179,11 @@ export function ChallengeQuizPlayer({
               disabled={isAnswerCorrect || isAnswerRevealed}
               className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <option value={1}>1秒 (+200pt)</option>
-              <option value={1.5}>1.5秒 (+150pt)</option>
+              <option value={1}>1秒 (+500pt)</option>
+              <option value={1.5}>1.5秒 (+300pt)</option>
               <option value={2}>2秒 (+100pt)</option>
-              <option value={3}>3秒 (+50pt)</option>
-              <option value={5}>5秒 (+0pt)</option>
+              <option value={3}>3秒 (+0pt)</option>
+              <option value={5}>5秒 (-100pt)</option>
             </select>
           </div>
         </div>
@@ -233,7 +233,7 @@ export function ChallengeQuizPlayer({
               disabled={isAnswerCorrect || isAnswerRevealed}
               className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              答えを表示 (-500pt)
+              答えを表示 (-1000pt)
             </button>
           </div>
         </form>

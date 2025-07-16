@@ -9,14 +9,12 @@ export function ChallengeResultPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [totalScore, setTotalScore] = useState(0);
-  const [maxScore, setMaxScore] = useState(10000);
   const [scores, setScores] = useState<ChallengeScore[]>([]);
   const [showAnimation, setShowAnimation] = useState(false);
   const [animatedScore, setAnimatedScore] = useState(0);
 
   useEffect(() => {
     const totalScoreParam = searchParams.get('totalScore');
-    const maxScoreParam = searchParams.get('maxScore');
     const scoresParam = searchParams.get('scores');
 
     if (totalScoreParam) {
@@ -39,10 +37,6 @@ export function ChallengeResultPageContent() {
       }, 500);
     }
 
-    if (maxScoreParam) {
-      setMaxScore(parseInt(maxScoreParam));
-    }
-
     if (scoresParam) {
       try {
         const parsedScores = JSON.parse(scoresParam);
@@ -53,9 +47,8 @@ export function ChallengeResultPageContent() {
     }
   }, [searchParams]);
 
-  const rank = getScoreRank(totalScore, maxScore);
-  const message = getScoreMessage(totalScore, maxScore);
-  const percentage = (totalScore / maxScore) * 100;
+  const rank = getScoreRank(totalScore);
+  const message = getScoreMessage(totalScore);
 
   const handleRetry = () => {
     router.push('/');
@@ -67,6 +60,8 @@ export function ChallengeResultPageContent() {
 
   const getRankColor = (rank: string) => {
     switch (rank) {
+      case 'SS':
+        return 'text-pink-500';
       case 'S':
         return 'text-yellow-500';
       case 'A':
@@ -84,6 +79,8 @@ export function ChallengeResultPageContent() {
 
   const getRankBgColor = (rank: string) => {
     switch (rank) {
+      case 'SS':
+        return 'bg-pink-100 border-pink-200';
       case 'S':
         return 'bg-yellow-100 border-yellow-200';
       case 'A':
@@ -128,24 +125,12 @@ export function ChallengeResultPageContent() {
           {/* スコア表示 */}
           <div className="mb-6">
             <div className="text-6xl font-bold text-red-600 mb-2">{showAnimation ? animatedScore.toLocaleString() : '0'}</div>
-            <div className="text-xl text-gray-600">/ {maxScore.toLocaleString()} 点</div>
+            <div className="text-xl text-gray-600">点</div>
           </div>
 
           {/* ランク表示 */}
           <div className={`inline-block px-8 py-4 rounded-full border-2 ${getRankBgColor(rank)} mb-4`}>
             <div className={`text-4xl font-bold ${getRankColor(rank)}`}>ランク {rank}</div>
-          </div>
-
-          {/* 達成率 */}
-          <div className="mb-4">
-            <div className="text-lg text-gray-600 mb-2">達成率</div>
-            <div className="w-full bg-gray-200 rounded-full h-4">
-              <div
-                className="bg-red-600 h-4 rounded-full transition-all duration-1000"
-                style={{ width: showAnimation ? `${percentage}%` : '0%' }}
-              />
-            </div>
-            <div className="text-sm text-gray-500 mt-1">{percentage.toFixed(1)}%</div>
           </div>
 
           {/* メッセージ */}
@@ -196,7 +181,7 @@ export function ChallengeResultPageContent() {
                       </td>
                       <td className="py-3 px-4 text-right text-green-600">+{score.playDurationBonus}</td>
                       <td className="py-3 px-4 text-right">
-                        {score.wasRevealed ? <span className="text-red-600">-500</span> : <span className="text-gray-400">-</span>}
+                        {score.wasRevealed ? <span className="text-red-600">-1000</span> : <span className="text-gray-400">-</span>}
                       </td>
                       <td className="py-3 px-4 text-right font-bold text-gray-900">{score.totalScore}</td>
                     </tr>
