@@ -175,60 +175,74 @@
             {
               "title": "asgard",
               "youtubeUrl": "https://www.youtube.com/watch?v=uWYihFGAnGM",
-              "duration": 39
+              "duration": 39,
+              "id": "track029"
             },
             {
               "title": "オンリーロンリーグローリー",
-              "youtubeUrl": "https://www.youtube.com/watch?v=Ypc1Gg5BlvE"
+              "youtubeUrl": "https://www.youtube.com/watch?v=Ypc1Gg5BlvE",
+              "id": "track030"
             },
             {
               "title": "乗車券",
-              "youtubeUrl": "https://www.youtube.com/watch?v=cEdtlk7MYc0"
+              "youtubeUrl": "https://www.youtube.com/watch?v=cEdtlk7MYc0",
+              "id": "track031"
             },
             {
               "title": "ギルド",
-              "youtubeUrl": "https://www.youtube.com/watch?v=vsh3udVsKJM"
+              "youtubeUrl": "https://www.youtube.com/watch?v=vsh3udVsKJM",
+              "id": "track032"
             },
             {
               "title": "embrace",
-              "youtubeUrl": "https://www.youtube.com/watch?v=I80CDBvUrwk"
+              "youtubeUrl": "https://www.youtube.com/watch?v=I80CDBvUrwk",
+              "id": "track033"
             },
             {
               "title": "sailing day",
-              "youtubeUrl": "https://www.youtube.com/watch?v=uYm4xArhHqE"
+              "youtubeUrl": "https://www.youtube.com/watch?v=uYm4xArhHqE",
+              "id": "track034"
             },
             {
               "title": "同じドアをくぐれたら",
-              "youtubeUrl": "https://www.youtube.com/watch?v=OZ0u1iVrHwY"
+              "youtubeUrl": "https://www.youtube.com/watch?v=OZ0u1iVrHwY",
+              "id": "track035"
             },
             {
               "title": "車輪の唄",
-              "youtubeUrl": "https://www.youtube.com/watch?v=vPpKwKabFx8"
+              "youtubeUrl": "https://www.youtube.com/watch?v=vPpKwKabFx8",
+              "id": "track036"
             },
             {
               "title": "スノースマイル",
-              "youtubeUrl": "https://www.youtube.com/watch?v=g1dveSJHViQ"
+              "youtubeUrl": "https://www.youtube.com/watch?v=g1dveSJHViQ",
+              "id": "track037"
             },
             {
               "title": "レム",
-              "youtubeUrl": "https://www.youtube.com/watch?v=V4_CZnHy9Ik"
+              "youtubeUrl": "https://www.youtube.com/watch?v=V4_CZnHy9Ik",
+              "id": "track038"
             },
             {
               "title": "fire sign",
-              "youtubeUrl": "https://www.youtube.com/watch?v=fpVdSxlKhFY"
+              "youtubeUrl": "https://www.youtube.com/watch?v=fpVdSxlKhFY",
+              "id": "track039"
             },
             {
               "title": "太陽",
-              "youtubeUrl": "https://www.youtube.com/watch?v=clSmwXmgxG4"
+              "youtubeUrl": "https://www.youtube.com/watch?v=clSmwXmgxG4",
+              "id": "track040"
             },
             {
               "title": "ロストマン",
-              "youtubeUrl": "https://www.youtube.com/watch?v=fiN8VW0JrI0"
+              "youtubeUrl": "https://www.youtube.com/watch?v=fiN8VW0JrI0",
+              "id": "track041"
             },
             {
               "title": "midgard",
               "youtubeUrl": "https://www.youtube.com/watch?v=_5wk388rPaw",
-              "duration": 41
+              "duration": 41,
+              "id": "track042"
             }
           ]
         },
@@ -238,90 +252,90 @@
           "jacketUrl": "/images/image_album005.png",
           "tracks": [
             {
-              "id": "track029",
+              "id": "track043",
               "title": "voyager",
               "youtubeUrl": "https://www.youtube.com/watch?v=7VwXZyz5QdM",
               "duration": 78
             },
             {
-              "id": "track030",
+              "id": "track044",
               "title": "星の鳥",
               "youtubeUrl": "https://www.youtube.com/watch?v=hAik5mowf2c",
               "duration": 55
             },
             {
-              "id": "track031",
+              "id": "track045",
               "title": "メーデー",
               "youtubeUrl": "https://www.youtube.com/watch?v=Vn9zKYcYLoc"
             },
             {
-              "id": "track032",
+              "id": "track046",
               "title": "才悩人応援歌",
               "youtubeUrl": "https://www.youtube.com/watch?v=VXZ1aXOWjok"
             },
             {
-              "id": "track033",
+              "id": "track047",
               "title": "プラネタリウム",
               "youtubeUrl": "https://www.youtube.com/watch?v=ZG2IlhCJEE0"
             },
             {
-              "id": "track034",
+              "id": "track048",
               "title": "supernova",
               "youtubeUrl": "https://www.youtube.com/watch?v=3ZCShETmJeQ"
             },
             {
-              "id": "track035",
+              "id": "track049",
               "title": "ハンマーソングと痛みの塔",
               "youtubeUrl": "https://www.youtube.com/watch?v=7kraPTlBKB0"
             },
             {
-              "id": "track036",
+              "id": "track050",
               "title": "時空かくれんぼ",
               "youtubeUrl": "https://www.youtube.com/watch?v=L7FMv8XT-j4"
             },
             {
-              "id": "track037",
+              "id": "track051",
               "title": "かさぶたぶたぶ",
               "youtubeUrl": "https://www.youtube.com/watch?v=CD3plUbgjgE"
             },
             {
-              "id": "track038",
+              "id": "track052",
               "title": "花の名",
               "youtubeUrl": "https://www.youtube.com/watch?v=Xyj56k8faUg"
             },
             {
-              "id": "track039",
+              "id": "track053",
               "title": "ひとりごと",
               "youtubeUrl": "https://www.youtube.com/watch?v=YR7gMP93CKI"
             },
             {
-              "id": "track040",
+              "id": "track054",
               "title": "飴玉の唄",
               "youtubeUrl": "https://www.youtube.com/watch?v=MnioFxM5Vu4"
             },
             {
-              "id": "track041",
+              "id": "track055",
               "title": "星の鳥 reprise",
               "youtubeUrl": "https://www.youtube.com/watch?v=kY3M5HJMAcs",
               "duration": 39
             },
             {
-              "id": "track042",
+              "id": "track056",
               "title": "カルマ",
               "youtubeUrl": "https://www.youtube.com/watch?v=CTPAQIUs_vk"
             },
             {
-              "id": "track043",
+              "id": "track057",
               "title": "arrows",
               "youtubeUrl": "https://www.youtube.com/watch?v=26Hb-ZFmkWI"
             },
             {
-              "id": "track044",
+              "id": "track058",
               "title": "涙のふるさと",
               "youtubeUrl": "https://www.youtube.com/watch?v=JcfRQBKz0e8"
             },
             {
-              "id": "track045",
+              "id": "track059",
               "title": "flyby",
               "youtubeUrl": "https://www.youtube.com/watch?v=dv6Kw2NW73s",
               "duration": 115
@@ -334,67 +348,67 @@
           "jacketUrl": "/images/image_album006.png",
           "tracks": [
             {
-              "id": "track046",
+              "id": "track060",
               "title": "ラフ・メイカー",
               "youtubeUrl": "https://www.youtube.com/watch?v=M7TJdfzQ3Dk"
             },
             {
-              "id": "track047",
+              "id": "track061",
               "title": "バイバイサンキュー",
               "youtubeUrl": "https://www.youtube.com/watch?v=BGMnp0nR6m0"
             },
             {
-              "id": "track048",
+              "id": "track062",
               "title": "彼女と星の椅子",
               "youtubeUrl": "https://www.youtube.com/watch?v=68xX9tb7tvk"
             },
             {
-              "id": "track049",
+              "id": "track063",
               "title": "ホリデイ",
               "youtubeUrl": "https://www.youtube.com/watch?v=Fkgx0i7h8Ho"
             },
             {
-              "id": "track050",
+              "id": "track064",
               "title": "Ever lasting lie(Acoustic Version)",
               "youtubeUrl": "https://www.youtube.com/watch?v=QmXSgAfpQmc"
             },
             {
-              "id": "track051",
+              "id": "track065",
               "title": "睡眠時間",
               "youtubeUrl": "https://www.youtube.com/watch?v=lYO56XRalz4"
             },
             {
-              "id": "track052",
+              "id": "track066",
               "title": "夢の飼い主",
               "youtubeUrl": "https://www.youtube.com/watch?v=hdDpKEBe5U0"
             },
             {
-              "id": "track053",
+              "id": "track067",
               "title": "スノースマイル ～ringing version～",
               "youtubeUrl": "https://www.youtube.com/watch?v=Lq4BifWOO9M"
             },
             {
-              "id": "track054",
+              "id": "track068",
               "title": "銀河鉄道",
               "youtubeUrl": "https://www.youtube.com/watch?v=823jsG23VUE"
             },
             {
-              "id": "track055",
+              "id": "track069",
               "title": "真っ赤な空を見ただろうか",
               "youtubeUrl": "https://www.youtube.com/watch?v=X0A0NaCJPFk"
             },
             {
-              "id": "track056",
+              "id": "track070",
               "title": "東京賛歌",
               "youtubeUrl": "https://www.youtube.com/watch?v=1hQaVvQtJO8"
             },
             {
-              "id": "track057",
+              "id": "track071",
               "title": "ガラスのブルース(28 years round)",
               "youtubeUrl": "https://www.youtube.com/watch?v=ZbhPqhD06TU"
             },
             {
-              "id": "track058",
+              "id": "track072",
               "title": "プレゼント",
               "youtubeUrl": "https://www.youtube.com/watch?v=csTVNaUQVds"
             }
@@ -406,73 +420,73 @@
           "jacketUrl": "/images/image_album007.png",
           "tracks": [
             {
-              "id": "track059",
+              "id": "track073",
               "title": "三ツ星カルテット",
               "youtubeUrl": "https://www.youtube.com/watch?v=oaBCI-hs1ec",
               "duration": 147
             },
             {
-              "id": "track060",
+              "id": "track074",
               "title": "R.I.P.",
               "youtubeUrl": "https://www.youtube.com/watch?v=vrcLQJefJdA"
             },
             {
-              "id": "track061",
+              "id": "track075",
               "title": "ウェザーリポート",
               "youtubeUrl": "https://www.youtube.com/watch?v=AAZFn21B0O8"
             },
             {
-              "id": "track062",
+              "id": "track076",
               "title": "分別奮闘記",
               "youtubeUrl": "https://www.youtube.com/watch?v=Bo9BKgsddF0"
             },
             {
-              "id": "track063",
+              "id": "track077",
               "title": "モーターサイクル",
               "youtubeUrl": "https://www.youtube.com/watch?v=tbNkG0fn9Uk"
             },
             {
-              "id": "track064",
+              "id": "track078",
               "title": "透明飛行船",
               "youtubeUrl": "https://www.youtube.com/watch?v=Mi-ORuB8CZY"
             },
             {
-              "id": "track065",
+              "id": "track079",
               "title": "魔法の料理 ～君から君へ～",
               "youtubeUrl": "https://www.youtube.com/watch?v=IEmKjiwfRPo"
             },
             {
-              "id": "track066",
+              "id": "track080",
               "title": "HAPPY",
               "youtubeUrl": "https://www.youtube.com/watch?v=2gFq_1ZMQ-g"
             },
             {
-              "id": "track067",
+              "id": "track081",
               "title": "66号線",
               "youtubeUrl": "https://www.youtube.com/watch?v=XGB0Sf71IBI"
             },
             {
-              "id": "track068",
+              "id": "track082",
               "title": "セントエルモの火",
               "youtubeUrl": "https://www.youtube.com/watch?v=iCVyMyR9Hi4"
             },
             {
-              "id": "track069",
+              "id": "track083",
               "title": "angel fall",
               "youtubeUrl": "https://www.youtube.com/watch?v=QCpPDZZKjJM"
             },
             {
-              "id": "track070",
+              "id": "track084",
               "title": "宇宙飛行士への手紙",
               "youtubeUrl": "https://www.youtube.com/watch?v=RcPJPeeVZUg"
             },
             {
-              "id": "track071",
+              "id": "track085",
               "title": "イノセント",
               "youtubeUrl": "https://www.youtube.com/watch?v=tehOjiaCbVI"
             },
             {
-              "id": "track072",
+              "id": "track086",
               "title": "beautiful glider",
               "youtubeUrl": "https://www.youtube.com/watch?v=xr0LcLgCF8I"
             }
@@ -484,73 +498,73 @@
           "jacketUrl": "/images/image_album008.png",
           "tracks": [
             {
-              "id": "track073",
+              "id": "track087",
               "title": "WILL",
               "youtubeUrl": "https://www.youtube.com/watch?v=JvN6ZUJfKNY",
               "duration": 228
             },
             {
-              "id": "track074",
+              "id": "track088",
               "title": "虹を待つ人",
               "youtubeUrl": "https://www.youtube.com/watch?v=8w_CMHy_Lic"
             },
             {
-              "id": "track075",
+              "id": "track089",
               "title": "ray",
               "youtubeUrl": "https://www.youtube.com/watch?v=9khpyvTIBBc"
             },
             {
-              "id": "track076",
+              "id": "track090",
               "title": "サザンクロス",
               "youtubeUrl": "https://www.youtube.com/watch?v=EYXRDg2AawM"
             },
             {
-              "id": "track077",
+              "id": "track091",
               "title": "ラストワン",
               "youtubeUrl": "https://www.youtube.com/watch?v=YW3iffWZfNY"
             },
             {
-              "id": "track078",
+              "id": "track092",
               "title": "morning glow",
               "youtubeUrl": "https://www.youtube.com/watch?v=EqNx4jEN6CM"
             },
             {
-              "id": "track079",
+              "id": "track093",
               "title": "ゼロ",
               "youtubeUrl": "https://www.youtube.com/watch?v=ONJu1dir4jg"
             },
             {
-              "id": "track080",
+              "id": "track094",
               "title": "トーチ",
               "youtubeUrl": "https://www.youtube.com/watch?v=Mewqs83-98Q"
             },
             {
-              "id": "track081",
+              "id": "track095",
               "title": "Smile",
               "youtubeUrl": "https://www.youtube.com/watch?v=SFkEKPNTxi4"
             },
             {
-              "id": "track082",
+              "id": "track096",
               "title": "firefly",
               "youtubeUrl": "https://www.youtube.com/watch?v=nShjkCVeECI"
             },
             {
-              "id": "track083",
+              "id": "track097",
               "title": "white note",
               "youtubeUrl": "https://www.youtube.com/watch?v=FejAf8vSXqc"
             },
             {
-              "id": "track084",
+              "id": "track098",
               "title": "友達の唄",
               "youtubeUrl": "https://www.youtube.com/watch?v=RCu3-y-D7Hk"
             },
             {
-              "id": "track085",
+              "id": "track099",
               "title": "(please)forgive",
               "youtubeUrl": "https://www.youtube.com/watch?v=plZ6h4YRUsM"
             },
             {
-              "id": "track086",
+              "id": "track100",
               "title": "グッドラック",
               "youtubeUrl": "https://www.youtube.com/watch?v=OkdG7Ihp-YE"
             }
@@ -562,57 +576,57 @@
           "jacketUrl": "/images/image_album009.png",
           "tracks": [
             {
-              "id": "track087",
+              "id": "track101",
               "title": "GO",
               "youtubeUrl": "https://www.youtube.com/watch?v=i2_4nVmhIVU"
             },
             {
-              "id": "track088",
+              "id": "track102",
               "title": "Hello,world!",
               "youtubeUrl": "https://www.youtube.com/watch?v=XPerYFKqk60"
             },
             {
-              "id": "track089",
+              "id": "track103",
               "title": "Butterfly",
               "youtubeUrl": "https://www.youtube.com/watch?v=hQ2FmP31Or4"
             },
             {
-              "id": "track090",
+              "id": "track104",
               "title": "流星群",
               "youtubeUrl": "https://www.youtube.com/watch?v=YO3nYayLFlI"
             },
             {
-              "id": "track091",
+              "id": "track105",
               "title": "宝石になった日",
               "youtubeUrl": "https://www.youtube.com/watch?v=HP5jhQ-9idE"
             },
             {
-              "id": "track092",
+              "id": "track106",
               "title": "コロニー",
               "youtubeUrl": "https://www.youtube.com/watch?v=HdG2Kwy_cbo"
             },
             {
-              "id": "track093",
+              "id": "track107",
               "title": "パレード",
               "youtubeUrl": "https://www.youtube.com/watch?v=iijdK9nL8iE"
             },
             {
-              "id": "track094",
+              "id": "track108",
               "title": "大我慢大会",
               "youtubeUrl": "https://www.youtube.com/watch?v=7eaKJ1NgghI"
             },
             {
-              "id": "track095",
+              "id": "track109",
               "title": "孤独の合唱",
               "youtubeUrl": "https://www.youtube.com/watch?v=nbzZF0FVm1Q"
             },
             {
-              "id": "track096",
+              "id": "track110",
               "title": "You were here",
               "youtubeUrl": "https://www.youtube.com/watch?v=EIM81zZTobY"
             },
             {
-              "id": "track097",
+              "id": "track111",
               "title": "ファイター",
               "youtubeUrl": "https://www.youtube.com/watch?v=4C0Zt5T8zoc"
             }
@@ -624,73 +638,73 @@
           "jacketUrl": "/images/image_album010.png",
           "tracks": [
             {
-              "id": "track098",
+              "id": "track112",
               "title": "aurora arc",
               "youtubeUrl": "https://www.youtube.com/watch?v=aD7GWSE22eM",
               "duration": 126
             },
             {
-              "id": "track099",
+              "id": "track113",
               "title": "月虹",
               "youtubeUrl": "https://www.youtube.com/watch?v=f1EtNsq9yfM"
             },
             {
-              "id": "track100",
+              "id": "track114",
               "title": "Aurora",
               "youtubeUrl": "https://www.youtube.com/watch?v=4xLNlrAAtYI"
             },
             {
-              "id": "track101",
+              "id": "track115",
               "title": "記念撮影",
               "youtubeUrl": "https://www.youtube.com/watch?v=LA7SpEWaQRw"
             },
             {
-              "id": "track102",
+              "id": "track116",
               "title": "ジャングルジム",
               "youtubeUrl": "https://www.youtube.com/watch?v=7sfo4u1ZNJQ"
             },
             {
-              "id": "track103",
+              "id": "track117",
               "title": "リボン",
               "youtubeUrl": "https://www.youtube.com/watch?v=nK2LYXA_GCA"
             },
             {
-              "id": "track104",
+              "id": "track118",
               "title": "シリウス",
               "youtubeUrl": "https://www.youtube.com/watch?v=K_Ei_tG6RHA"
             },
             {
-              "id": "track105",
+              "id": "track119",
               "title": "アリア",
               "youtubeUrl": "https://www.youtube.com/watch?v=iJFEw6OKsjg"
             },
             {
-              "id": "track106",
+              "id": "track120",
               "title": "話がしたいよ",
               "youtubeUrl": "https://www.youtube.com/watch?v=CFhatkyOw2U"
             },
             {
-              "id": "track107",
+              "id": "track121",
               "title": "アンサー",
               "youtubeUrl": "https://www.youtube.com/watch?v=l8G6Hirforo"
             },
             {
-              "id": "track108",
+              "id": "track122",
               "title": "望遠のマーチ",
               "youtubeUrl": "https://www.youtube.com/watch?v=DYUTeeoJ9Sw"
             },
             {
-              "id": "track109",
+              "id": "track123",
               "title": "Spica",
               "youtubeUrl": "https://www.youtube.com/watch?v=XCd-KU4c6aA"
             },
             {
-              "id": "track110",
+              "id": "track124",
               "title": "新世界",
               "youtubeUrl": "https://www.youtube.com/watch?v=MC_3jFtcvgM"
             },
             {
-              "id": "track111",
+              "id": "track125",
               "title": "流れ星の正体",
               "youtubeUrl": "https://www.youtube.com/watch?v=9AMWYhaOMEc"
             }
@@ -702,67 +716,67 @@
           "jacketUrl": "/images/image_album011.png",
           "tracks": [
             {
-              "id": "track112",
+              "id": "track126",
               "title": "Sleep Walking Orchestra",
               "youtubeUrl": "https://www.youtube.com/watch?v=elLs1xE0tRM"
             },
             {
-              "id": "track113",
+              "id": "track127",
               "title": "なないろ",
               "youtubeUrl": "https://www.youtube.com/watch?v=LXHQO4MuKUc"
             },
             {
-              "id": "track114",
+              "id": "track128",
               "title": "Gravity",
               "youtubeUrl": "https://www.youtube.com/watch?v=QFtc0ll7WkU"
             },
             {
-              "id": "track115",
+              "id": "track129",
               "title": "SOUVENIR",
               "youtubeUrl": "https://www.youtube.com/watch?v=d1n5axnApLE"
             },
             {
-              "id": "track116",
+              "id": "track130",
               "title": "Small world",
               "youtubeUrl": "https://www.youtube.com/watch?v=fAfhDecODyo"
             },
             {
-              "id": "track117",
+              "id": "track131",
               "title": "クロノスタシス",
               "youtubeUrl": "https://www.youtube.com/watch?v=idu-RTixxQE"
             },
             {
-              "id": "track118",
+              "id": "track132",
               "title": "Flare",
               "youtubeUrl": "https://www.youtube.com/watch?v=q4eMdJkw1YM"
             },
             {
-              "id": "track119",
+              "id": "track133",
               "title": "邂逅",
               "youtubeUrl": "https://www.youtube.com/watch?v=xgJOfiQl5Qo"
             },
             {
-              "id": "track120",
+              "id": "track134",
               "title": "青の朔日",
               "youtubeUrl": "https://www.youtube.com/watch?v=2eEJwgXnEJA"
             },
             {
-              "id": "track121",
+              "id": "track135",
               "title": "strawberry",
               "youtubeUrl": "https://www.youtube.com/watch?v=8drai3pw15w"
             },
             {
-              "id": "track122",
+              "id": "track136",
               "title": "窓の中から",
               "youtubeUrl": "https://www.youtube.com/watch?v=fBys_dp1-4o"
             },
             {
-              "id": "track123",
+              "id": "track137",
               "title": "木漏れ日と一緒に",
               "youtubeUrl": "https://www.youtube.com/watch?v=97qo2RA-PcM"
             },
             {
-              "id": "track124",
+              "id": "track138",
               "title": "アカシア",
               "youtubeUrl": "https://www.youtube.com/watch?v=Wy9CrMPn90s"
             }
@@ -774,32 +788,32 @@
           "jacketUrl": "/images/image_album012.png",
           "tracks": [
             {
-              "id": "track125",
+              "id": "track139",
               "title": "pinkie",
               "youtubeUrl": "https://www.youtube.com/watch?v=gC2-tV3ZCLM"
             },
             {
-              "id": "track126",
+              "id": "track140",
               "title": "キャラバン",
               "youtubeUrl": "https://www.youtube.com/watch?v=9XMVIJOlcPs"
             },
             {
-              "id": "track127",
+              "id": "track141",
               "title": "good friends",
               "youtubeUrl": "https://www.youtube.com/watch?v=bQF6J-V6oBo"
             },
             {
-              "id": "track128",
+              "id": "track142",
               "title": "歩く幽霊",
               "youtubeUrl": "https://www.youtube.com/watch?v=PIXrZqYW1wY"
             },
             {
-              "id": "track129",
+              "id": "track143",
               "title": "ディアマン",
               "youtubeUrl": "https://www.youtube.com/watch?v=nFwgsBmhp24"
             },
             {
-              "id": "track130",
+              "id": "track144",
               "title": "ほんとのほんと",
               "youtubeUrl": "https://www.youtube.com/watch?v=BjhOqCqFuDw"
             }

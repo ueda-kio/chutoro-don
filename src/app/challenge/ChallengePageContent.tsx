@@ -336,6 +336,7 @@ export function ChallengePageContent() {
           isAnswerRevealed={challengeSession.isAnswerRevealed}
           isGameCompleted={challengeSession.isGameCompleted}
           currentScore={challengeSession.totalScore}
+          songsData={songsData}
         />
       </main>
 
