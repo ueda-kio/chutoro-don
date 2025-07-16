@@ -127,7 +127,7 @@ describe('チャレンジモード 統合テスト', () => {
     it('最終スコアが正しく表示される', async () => {
       (useSearchParams as jest.Mock).mockReturnValue({
         get: jest.fn().mockImplementation((key) => {
-          if (key === 'totalScore') return '6500';
+          if (key === 'totalScore') return '8500';
           if (key === 'scores') return JSON.stringify([
             {
               questionIndex: 0,
@@ -149,7 +149,7 @@ describe('チャレンジモード 統合テスト', () => {
 
       await waitFor(() => {
         expect(screen.getByText('最終結果')).toBeInTheDocument();
-        expect(screen.getByText('6,500')).toBeInTheDocument();
+        expect(screen.getByText('8,500')).toBeInTheDocument();
         expect(screen.getByText('点')).toBeInTheDocument();
       });
     });
@@ -157,7 +157,7 @@ describe('チャレンジモード 統合テスト', () => {
     it('ランク判定が正しく表示される', async () => {
       (useSearchParams as jest.Mock).mockReturnValue({
         get: jest.fn().mockImplementation((key) => {
-          if (key === 'totalScore') return '6500'; // Cランク（6000-7999点）
+          if (key === 'totalScore') return '8500';
           return null;
         }),
       });
