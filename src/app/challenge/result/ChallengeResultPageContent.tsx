@@ -1,60 +1,59 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import type { ChallengeScore } from '@/types';
 import { getScoreRank, getScoreMessage } from '@/utils/challenge';
+import { getChallengeResult, clearChallengeResult } from '@/utils/sessionStorage';
 
 export function ChallengeResultPageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [totalScore, setTotalScore] = useState(0);
   const [scores, setScores] = useState<ChallengeScore[]>([]);
   const [showAnimation, setShowAnimation] = useState(false);
   const [animatedScore, setAnimatedScore] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const totalScoreParam = searchParams.get('totalScore');
-    const scoresParam = searchParams.get('scores');
+    const result = getChallengeResult();
 
-    if (totalScoreParam) {
-      const score = parseInt(totalScoreParam);
-      setTotalScore(score);
-
-      // スコアアニメーション
-      setTimeout(() => {
-        setShowAnimation(true);
-        let currentScore = 0;
-        const increment = score / 50;
-        const timer = setInterval(() => {
-          currentScore += increment;
-          if (currentScore >= score) {
-            currentScore = score;
-            clearInterval(timer);
-          }
-          setAnimatedScore(Math.floor(currentScore));
-        }, 30);
-      }, 500);
+    if (!result) {
+      setError('チャレンジ結果が見つかりません。');
+      setIsLoading(false);
+      return;
     }
 
-    if (scoresParam) {
-      try {
-        const parsedScores = JSON.parse(scoresParam);
-        setScores(parsedScores);
-      } catch (error) {
-        console.error('スコアデータの解析に失敗しました:', error);
-      }
-    }
-  }, [searchParams]);
+    setTotalScore(result.totalScore);
+    setScores(result.scores);
+    setIsLoading(false);
+
+    // スコアアニメーション
+    setTimeout(() => {
+      setShowAnimation(true);
+      let currentScore = 0;
+      const increment = result.totalScore / 50;
+      const timer = setInterval(() => {
+        currentScore += increment;
+        if (currentScore >= result.totalScore) {
+          currentScore = result.totalScore;
+          clearInterval(timer);
+        }
+        setAnimatedScore(Math.floor(currentScore));
+      }, 30);
+    }, 500);
+  }, []);
 
   const rank = getScoreRank(totalScore);
   const message = getScoreMessage(totalScore);
 
   const handleRetry = () => {
+    clearChallengeResult();
     router.push('/');
   };
 
   const handleBackToHome = () => {
+    clearChallengeResult();
     router.push('/');
   };
 
@@ -101,6 +100,30 @@ export function ChallengeResultPageContent() {
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4" />
+          <div className="text-lg text-gray-600">結果を読み込み中...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg text-red-600 mb-4">{error}</div>
+          <button type="button" onClick={handleBackToHome} className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md">
+            トップに戻る
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -161,7 +184,6 @@ export function ChallengeResultPageContent() {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left py-3 px-4 font-medium text-gray-700">問題</th>
-                    <th className="text-right py-3 px-4 font-medium text-gray-700">基本点</th>
                     <th className="text-right py-3 px-4 font-medium text-gray-700">時間</th>
                     <th className="text-right py-3 px-4 font-medium text-gray-700">時間ボーナス</th>
                     <th className="text-right py-3 px-4 font-medium text-gray-700">再生時間ボーナス</th>
@@ -173,7 +195,6 @@ export function ChallengeResultPageContent() {
                   {scores.map((score) => (
                     <tr key={score.questionIndex} className="border-b hover:bg-gray-50">
                       <td className="py-3 px-4 text-gray-900">Q.{score.questionIndex + 1}</td>
-                      <td className="py-3 px-4 text-right text-gray-900">{score.baseScore}</td>
                       <td className="py-3 px-4 text-right text-gray-600">{formatTime(score.timeElapsed)}</td>
                       <td className={`py-3 px-4 text-right ${score.timeBonus >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {score.timeBonus >= 0 ? '+' : ''}
@@ -189,7 +210,7 @@ export function ChallengeResultPageContent() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t-2 border-gray-300">
-                    <td className="py-3 px-4 font-bold text-gray-900" colSpan={6}>
+                    <td className="py-3 px-4 font-bold text-gray-900" colSpan={5}>
                       合計
                     </td>
                     <td className="py-3 px-4 text-right font-bold text-red-600 text-lg">{totalScore.toLocaleString()}</td>

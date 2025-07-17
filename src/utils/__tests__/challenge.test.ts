@@ -96,8 +96,8 @@ describe('チャレンジモード - ユーティリティ関数', () => {
 
   describe('calculateQuestionScore', () => {
     it('基本的なスコア計算が正しく行われる', () => {
-      const score = calculateQuestionScore(0, 20, 2, false);
-      expect(score.baseScore).toBe(1000);
+      const score = calculateQuestionScore(0, 'track001', 20, 2, false);
+      expect(score.trackId).toBe('track001');
       expect(score.timeBonus).toBe(0); // 20秒経過時
       expect(score.playDurationBonus).toBe(100); // 2秒
       expect(score.revealPenalty).toBe(0); // 答え表示なし
@@ -105,19 +105,22 @@ describe('チャレンジモード - ユーティリティ関数', () => {
     });
 
     it('答えを表示した場合はペナルティが適用される', () => {
-      const score = calculateQuestionScore(0, 20, 2, true);
+      const score = calculateQuestionScore(0, 'track002', 20, 2, true);
+      expect(score.trackId).toBe('track002');
       expect(score.revealPenalty).toBe(-1000);
       expect(score.totalScore).toBe(100); // 1000 + 0 + 100 - 1000
     });
 
     it('時間超過の場合は減点される', () => {
-      const score = calculateQuestionScore(0, 90, 1, false);
+      const score = calculateQuestionScore(0, 'track003', 90, 1, false);
+      expect(score.trackId).toBe('track003');
       expect(score.timeBonus).toBe(-300);
       expect(score.totalScore).toBe(1200); // 1000 - 300 + 500
     });
 
     it('スコアが0を下回らない', () => {
-      const score = calculateQuestionScore(0, 120, 5, true);
+      const score = calculateQuestionScore(0, 'track004', 120, 5, true);
+      expect(score.trackId).toBe('track004');
       expect(score.totalScore).toBeGreaterThanOrEqual(0);
     });
   });
@@ -125,9 +128,9 @@ describe('チャレンジモード - ユーティリティ関数', () => {
   describe('calculateTotalScore', () => {
     it('複数のスコアを正しく合計する', () => {
       const scores = [
-        { questionIndex: 0, baseScore: 1000, timeBonus: 200, playDurationBonus: 500, revealPenalty: 0, totalScore: 1700, timeElapsed: 10, playDuration: 1, wasRevealed: false },
-        { questionIndex: 1, baseScore: 1000, timeBonus: 100, playDurationBonus: 300, revealPenalty: 0, totalScore: 1400, timeElapsed: 15, playDuration: 1.5, wasRevealed: false },
-        { questionIndex: 2, baseScore: 1000, timeBonus: 0, playDurationBonus: 100, revealPenalty: -1000, totalScore: 100, timeElapsed: 20, playDuration: 2, wasRevealed: true },
+        { questionIndex: 0, trackId: 'track001', timeBonus: 200, playDurationBonus: 500, revealPenalty: 0, totalScore: 1700, timeElapsed: 10, playDuration: 1, wasRevealed: false },
+        { questionIndex: 1, trackId: 'track002', timeBonus: 100, playDurationBonus: 300, revealPenalty: 0, totalScore: 1400, timeElapsed: 15, playDuration: 1.5, wasRevealed: false },
+        { questionIndex: 2, trackId: 'track003', timeBonus: 0, playDurationBonus: 100, revealPenalty: -1000, totalScore: 100, timeElapsed: 20, playDuration: 2, wasRevealed: true },
       ];
 
       expect(calculateTotalScore(scores)).toBe(3200);
@@ -136,38 +139,38 @@ describe('チャレンジモード - ユーティリティ関数', () => {
     test('各ランクの動作確認', () => {
       // ランクSS: 1秒×5問（10秒以内）+ 1.5秒×5問（15秒以内）
       const ssScores = [
-        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i, 10, 1, false)),
-        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i + 5, 15, 1.5, false))
+        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i, `track${i}`, 10, 1, false)),
+        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i + 5, `track${i + 5}`, 15, 1.5, false))
       ];
       const ssTotal = calculateTotalScore(ssScores);
       console.log('ランクSS:', ssTotal, getScoreRank(ssTotal));
 
       // ランクS: 1.5秒×10問、15秒以内
       const sScores = Array(10).fill(null).map((_, i) =>
-        calculateQuestionScore(i, 15, 1.5, false)
+        calculateQuestionScore(i, `track${i}`, 15, 1.5, false)
       );
       const sTotal = calculateTotalScore(sScores);
       console.log('ランクS:', sTotal, getScoreRank(sTotal));
 
       // ランクA: 1.5秒×5問（15秒以内）+ 2秒×5問（20秒以内）
       const aScores = [
-        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i, 15, 1.5, false)),
-        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i + 5, 20, 2, false))
+        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i, `track${i}`, 15, 1.5, false)),
+        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i + 5, `track${i + 5}`, 20, 2, false))
       ];
       const aTotal = calculateTotalScore(aScores);
       console.log('ランクA:', aTotal, getScoreRank(aTotal));
 
       // ランクB: 2秒×10問、15~20秒、答え表示2回
       const bScores = Array(10).fill(null).map((_, i) =>
-        calculateQuestionScore(i, 17, 2, i < 2)
+        calculateQuestionScore(i, `track${i}`, 17, 2, i < 2)
       );
       const bTotal = calculateTotalScore(bScores);
       console.log('ランクB:', bTotal, getScoreRank(bTotal));
 
       // ランクC: 2秒×5問 + 3秒×5問、15~20秒、答え表示4回
       const cScores = [
-        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i, 17, 2, i < 4)),
-        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i + 5, 17, 3, false))
+        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i, `track${i}`, 17, 2, i < 4)),
+        ...Array(5).fill(null).map((_, i) => calculateQuestionScore(i + 5, `track${i + 5}`, 17, 3, false))
       ];
       const cTotal = calculateTotalScore(cScores);
       console.log('ランクC:', cTotal, getScoreRank(cTotal));

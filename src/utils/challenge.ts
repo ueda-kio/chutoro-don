@@ -70,6 +70,7 @@ export function calculateTimeBonus(timeElapsed: number): number {
  */
 export function calculateQuestionScore(
   questionIndex: number,
+  trackId: string,
   timeElapsed: number,
   playDuration: number,
   wasRevealed: boolean
@@ -83,7 +84,7 @@ export function calculateQuestionScore(
 
   return {
     questionIndex,
-    baseScore,
+    trackId,
     timeBonus,
     playDurationBonus,
     revealPenalty,
