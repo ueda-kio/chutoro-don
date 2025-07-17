@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import type { SongsData, GameMode } from '@/types';
 import { loadSongsData } from '@/utils/quiz';
 import { AlbumSelectorModal } from '@/components/Modal';
@@ -141,7 +142,18 @@ export default function HomePage() {
         {/* タイトル */}
         <div className="text-center mb-12">
           <h1 className="text-6xl font-bold text-gray-900 mb-6">中トロドン</h1>
-          <p className="text-2xl text-gray-600 mb-4">曲の中トロを聴いて曲名を当てよう</p>
+          <p className="text-2xl text-gray-600 mb-6">曲の中トロを聴いて曲名を当てよう</p>
+          
+          {/* ランキングボタン */}
+          <div className="mb-6">
+            <Link
+              href="/ranking"
+              className="inline-flex items-center px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-lg transition-colors shadow-lg"
+            >
+              <span className="mr-2">🏆</span>
+              ランキングを見る
+            </Link>
+          </div>
         </div>
 
         {/* プレイモード選択エリア */}

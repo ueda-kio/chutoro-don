@@ -1,4 +1,4 @@
-import { saveChallengeResult, getChallengeResult, clearChallengeResult } from '../sessionStorage';
+import { saveChallengeResult, getChallengeResult, clearChallengeResult, markChallengeResultAsRegistered } from '../sessionStorage';
 import type { ChallengeScore } from '@/types';
 
 // SessionStorageのモック
@@ -123,6 +123,22 @@ describe('SessionStorage Utilities', () => {
       expect(mockSessionStorage.removeItem).toHaveBeenCalledWith('challengeResult');
     });
 
+    it('登録済みフラグが含まれたデータを正しく取得する', () => {
+      const mockResult = {
+        totalScore: 1700,
+        scores: [],
+        timestamp: Date.now(),
+        isRegistered: true,
+      };
+
+      mockSessionStorage.getItem.mockReturnValue(JSON.stringify(mockResult));
+
+      const result = getChallengeResult();
+
+      expect(result).toEqual(mockResult);
+      expect(result?.isRegistered).toBe(true);
+    });
+
     it('JSON解析エラー時にコンソールエラーを出力し、nullを返す', () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
       mockSessionStorage.getItem.mockReturnValue('invalid json');
@@ -155,6 +171,50 @@ describe('SessionStorage Utilities', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         'Failed to clear challenge result from sessionStorage:',
+        expect.any(Error)
+      );
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('markChallengeResultAsRegistered', () => {
+    it('既存の結果に登録済みフラグを正しく追加する', () => {
+      const mockResult = {
+        totalScore: 1700,
+        scores: [],
+        timestamp: Date.now(),
+      };
+
+      mockSessionStorage.getItem.mockReturnValue(JSON.stringify(mockResult));
+
+      markChallengeResultAsRegistered();
+
+      expect(mockSessionStorage.getItem).toHaveBeenCalledWith('challengeResult');
+      expect(mockSessionStorage.setItem).toHaveBeenCalledWith(
+        'challengeResult',
+        expect.stringContaining('"isRegistered":true')
+      );
+    });
+
+    it('データが存在しない場合は何もしない', () => {
+      mockSessionStorage.getItem.mockReturnValue(null);
+
+      markChallengeResultAsRegistered();
+
+      expect(mockSessionStorage.getItem).toHaveBeenCalledWith('challengeResult');
+      expect(mockSessionStorage.setItem).not.toHaveBeenCalled();
+    });
+
+    it('SessionStorageエラー時にコンソールエラーを出力する', () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      mockSessionStorage.getItem.mockImplementation(() => {
+        throw new Error('Storage error');
+      });
+
+      markChallengeResultAsRegistered();
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Failed to mark challenge result as registered:',
         expect.any(Error)
       );
       consoleSpy.mockRestore();

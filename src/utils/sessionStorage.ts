@@ -4,6 +4,7 @@ interface ChallengeResult {
   totalScore: number;
   scores: ChallengeScore[];
   timestamp: number;
+  isRegistered?: boolean; // ランキング登録済みフラグ
 }
 
 const CHALLENGE_RESULT_KEY = 'challengeResult';
@@ -38,7 +39,7 @@ export function getChallengeResult(): ChallengeResult | null {
     if (!stored) return null;
 
     const result = JSON.parse(stored) as ChallengeResult;
-    
+
     // 5分以内のデータのみ有効とする（古いデータの無効化）
     const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
     if (result.timestamp < fiveMinutesAgo) {
@@ -50,6 +51,25 @@ export function getChallengeResult(): ChallengeResult | null {
   } catch (error) {
     console.error('Failed to get challenge result from sessionStorage:', error);
     return null;
+  }
+}
+
+/**
+ * チャレンジ結果の登録状態を更新
+ */
+export function markChallengeResultAsRegistered(): void {
+  if (typeof window === 'undefined') return; // SSR対応
+
+  try {
+    const stored = sessionStorage.getItem(CHALLENGE_RESULT_KEY);
+    if (!stored) return;
+
+    const result = JSON.parse(stored) as ChallengeResult;
+    result.isRegistered = true;
+
+    sessionStorage.setItem(CHALLENGE_RESULT_KEY, JSON.stringify(result));
+  } catch (error) {
+    console.error('Failed to mark challenge result as registered:', error);
   }
 }
 
