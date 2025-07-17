@@ -116,19 +116,33 @@ export function ChallengePageContent() {
 
       const newScores = [...challengeSession.scores, questionScore];
       const totalScore = calculateTotalScore(newScores);
+      const isLastQuestion = challengeSession.currentQuestionIndex === challengeSession.questions.length - 1;
 
-      setChallengeSession(prev => prev ? {
-        ...prev,
+      const updatedSession = {
+        ...challengeSession,
         scores: newScores,
         totalScore,
         userAnswer: answer,
         isAnswerCorrect: true,
-      } : null);
+        isGameCompleted: isLastQuestion,
+      };
 
-      // 次の問題に進む
-      setTimeout(() => {
-        handleNextQuestion();
-      }, 1500);
+      setChallengeSession(updatedSession);
+
+      if (isLastQuestion) {
+        // 最後の問題の場合、結果画面に遷移
+        setTimeout(() => {
+          const params = new URLSearchParams();
+          params.set('totalScore', updatedSession.totalScore.toString());
+          params.set('scores', JSON.stringify(updatedSession.scores));
+          router.push(`/challenge/result?${params.toString()}`);
+        }, 1500);
+      } else {
+        // 次の問題に進む
+        setTimeout(() => {
+          handleNextQuestion();
+        }, 1500);
+      }
     } else {
       // 不正解の場合、回答をリセット
       setChallengeSession(prev => prev ? {
@@ -154,13 +168,22 @@ export function ChallengePageContent() {
 
     const newScores = [...challengeSession.scores, questionScore];
     const totalScore = calculateTotalScore(newScores);
+    const isLastQuestion = challengeSession.currentQuestionIndex === challengeSession.questions.length - 1;
 
-    setChallengeSession(prev => prev ? {
-      ...prev,
+    const updatedSession = {
+      ...challengeSession,
       scores: newScores,
       totalScore,
       isAnswerRevealed: true,
-    } : null);
+      isGameCompleted: isLastQuestion,
+    };
+
+    setChallengeSession(updatedSession);
+
+    // 最後の問題で答えを表示した場合、結果画面遷移の準備
+    if (isLastQuestion) {
+      // 次へボタンで結果画面に遷移するため、ここでは何もしない
+    }
   };
 
   const handleNextQuestion = () => {
@@ -168,18 +191,19 @@ export function ChallengePageContent() {
 
     const nextIndex = challengeSession.currentQuestionIndex + 1;
     
-    if (nextIndex >= challengeSession.questions.length) {
-      // 全問題が完了
-      setChallengeSession(prev => prev ? {
-        ...prev,
+    if (nextIndex >= challengeSession.questions.length || challengeSession.isGameCompleted) {
+      // 全問題が完了（10問目で答えを表示した場合もここに到達）
+      const updatedSession = {
+        ...challengeSession,
         isGameCompleted: true,
-      } : null);
+      };
+      setChallengeSession(updatedSession);
       
-      // スコア表示画面に遷移
+      // スコア表示画面に遷移（最新のスコアを使用）
       setTimeout(() => {
         const params = new URLSearchParams();
-        params.set('totalScore', challengeSession.totalScore.toString());
-        params.set('scores', JSON.stringify(challengeSession.scores));
+        params.set('totalScore', updatedSession.totalScore.toString());
+        params.set('scores', JSON.stringify(updatedSession.scores));
         router.push(`/challenge/result?${params.toString()}`);
       }, 1000);
     } else {
