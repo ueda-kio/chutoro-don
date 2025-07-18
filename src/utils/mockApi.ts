@@ -13,6 +13,35 @@ let mockRankings: RankingEntry[] = [
     score: 9800,
     rank: 'S',
     created_at: '2025-01-15T10:00:00.000Z',
+    details: [
+      {
+        trackId: 'track1',
+        trackName: 'サンプル楽曲1',
+        albumName: 'サンプルアルバム1',
+        artistName: 'サンプルアーティスト1',
+        answerTime: 5.2,
+        playbackDuration: 1,
+        wasRevealed: false,
+      },
+      {
+        trackId: 'track2',
+        trackName: 'サンプル楽曲2',
+        albumName: 'サンプルアルバム2',
+        artistName: 'サンプルアーティスト2',
+        answerTime: 8.7,
+        playbackDuration: 1.5,
+        wasRevealed: false,
+      },
+      {
+        trackId: 'track3',
+        trackName: 'サンプル楽曲3',
+        albumName: 'サンプルアルバム3',
+        artistName: 'サンプルアーティスト3',
+        answerTime: 12.1,
+        playbackDuration: 2,
+        wasRevealed: true,
+      },
+    ],
   },
   {
     id: 2,
@@ -20,6 +49,26 @@ let mockRankings: RankingEntry[] = [
     score: 8500,
     rank: 'A',
     created_at: '2025-01-15T11:00:00.000Z',
+    details: [
+      {
+        trackId: 'track4',
+        trackName: 'テスト楽曲A',
+        albumName: 'テストアルバムA',
+        artistName: 'テストアーティストA',
+        answerTime: 7.5,
+        playbackDuration: 1.5,
+        wasRevealed: false,
+      },
+      {
+        trackId: 'track5',
+        trackName: 'テスト楽曲B',
+        albumName: 'テストアルバムB',
+        artistName: 'テストアーティストB',
+        answerTime: 15.3,
+        playbackDuration: 3,
+        wasRevealed: true,
+      },
+    ],
   },
   {
     id: 3,
@@ -27,6 +76,17 @@ let mockRankings: RankingEntry[] = [
     score: 7200,
     rank: 'B',
     created_at: '2025-01-15T12:00:00.000Z',
+    details: [
+      {
+        trackId: 'track6',
+        trackName: 'デモ楽曲1',
+        albumName: 'デモアルバム1',
+        artistName: 'デモアーティスト1',
+        answerTime: 25.8,
+        playbackDuration: 5,
+        wasRevealed: false,
+      },
+    ],
   },
   {
     id: 4,
@@ -115,7 +175,7 @@ export async function postMockRanking(submission: ScoreSubmission): Promise<Scor
     };
   }
 
-  if (!submission.rank || !['S', 'A', 'B', 'C', 'D'].includes(submission.rank)) {
+  if (!submission.rank || !['SS', 'S', 'A', 'B', 'C', 'D', 'F'].includes(submission.rank)) {
     return {
       success: false,
       error: '無効なランクです',
@@ -129,6 +189,7 @@ export async function postMockRanking(submission: ScoreSubmission): Promise<Scor
     score: submission.score,
     rank: submission.rank,
     created_at: new Date().toISOString(),
+    details: submission.details || undefined,
   };
 
   mockRankings.push(newEntry);
@@ -150,6 +211,35 @@ export function resetMockRankings() {
       score: 9800,
       rank: 'S',
       created_at: '2025-01-15T10:00:00.000Z',
+      details: [
+        {
+          trackId: 'track1',
+          trackName: 'サンプル楽曲1',
+          albumName: 'サンプルアルバム1',
+          artistName: 'サンプルアーティスト1',
+          answerTime: 5.2,
+          playbackDuration: 1,
+          wasRevealed: false,
+        },
+        {
+          trackId: 'track2',
+          trackName: 'サンプル楽曲2',
+          albumName: 'サンプルアルバム2',
+          artistName: 'サンプルアーティスト2',
+          answerTime: 8.7,
+          playbackDuration: 1.5,
+          wasRevealed: false,
+        },
+        {
+          trackId: 'track3',
+          trackName: 'サンプル楽曲3',
+          albumName: 'サンプルアルバム3',
+          artistName: 'サンプルアーティスト3',
+          answerTime: 12.1,
+          playbackDuration: 2,
+          wasRevealed: true,
+        },
+      ],
     },
     {
       id: 2,
@@ -157,6 +247,26 @@ export function resetMockRankings() {
       score: 8500,
       rank: 'A',
       created_at: '2025-01-15T11:00:00.000Z',
+      details: [
+        {
+          trackId: 'track4',
+          trackName: 'テスト楽曲A',
+          albumName: 'テストアルバムA',
+          artistName: 'テストアーティストA',
+          answerTime: 7.5,
+          playbackDuration: 1.5,
+          wasRevealed: false,
+        },
+        {
+          trackId: 'track5',
+          trackName: 'テスト楽曲B',
+          albumName: 'テストアルバムB',
+          artistName: 'テストアーティストB',
+          answerTime: 15.3,
+          playbackDuration: 3,
+          wasRevealed: true,
+        },
+      ],
     },
     {
       id: 3,
@@ -164,6 +274,17 @@ export function resetMockRankings() {
       score: 7200,
       rank: 'B',
       created_at: '2025-01-15T12:00:00.000Z',
+      details: [
+        {
+          trackId: 'track6',
+          trackName: 'デモ楽曲1',
+          albumName: 'デモアルバム1',
+          artistName: 'デモアーティスト1',
+          answerTime: 25.8,
+          playbackDuration: 5,
+          wasRevealed: false,
+        },
+      ],
     },
     {
       id: 4,

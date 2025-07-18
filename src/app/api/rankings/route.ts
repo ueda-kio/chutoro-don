@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import type { ScoreSubmission, RankingApiResponse, ScoreRegistrationResponse } from '@/types/ranking';
+import type { ScoreSubmission, RankingApiResponse, ScoreRegistrationResponse, ScoreDetails } from '@/types/ranking';
 
 // グローバルでPrismaClientのインスタンスを管理（開発環境での多重初期化を防ぐ）
 const globalForPrisma = globalThis as unknown as {
@@ -93,6 +93,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<RankingApi
         score: true,
         rank: true,
         created_at: true,
+        details: true,
       },
       orderBy: [
         { score: 'desc' },
@@ -101,10 +102,11 @@ export async function GET(request: NextRequest): Promise<NextResponse<RankingApi
       take: limit,
     });
 
-    // ISO文字列に変換
+    // ISO文字列に変換とdetailsの型変換
     const formattedRankings = rankings.map(ranking => ({
       ...ranking,
       created_at: ranking.created_at.toISOString(),
+      details: ranking.details ? (ranking.details as unknown as ScoreDetails[]) : undefined,
     }));
 
     return NextResponse.json({ success: true, data: formattedRankings });
