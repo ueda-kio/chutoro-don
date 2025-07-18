@@ -26,7 +26,7 @@ const RankingPageContent = () => {
         } else {
           setError(data.error || 'ランキングの取得に失敗しました');
         }
-      } catch (err) {
+      } catch {
         setError('ネットワークエラーが発生しました');
       } finally {
         setLoading(false);

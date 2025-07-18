@@ -365,7 +365,6 @@ describe('Quiz Utility Functions', () => {
 
         // 選択されたアルバムの楽曲のみ含まれる
         const selectedTrackIds = selectedQuestions.map(q => q.track.id);
-        const allTrackIds = allQuestions.map(q => q.track.id);
 
         for (const trackId of selectedTrackIds) {
           expect(['track001', 'track002', 'track003']).toContain(trackId);

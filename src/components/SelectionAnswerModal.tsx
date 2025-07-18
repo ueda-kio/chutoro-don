@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import type { SongsData, Album, Track } from '@/types';
 
 interface SelectionAnswerModalProps {
@@ -32,11 +33,11 @@ export function SelectionAnswerModal({ isOpen, onClose, onSubmit, songsData }: S
     }
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     onClose();
     setSelectedAlbum(null);
     setSelectedTrack(null);
-  };
+  }, [onClose]);
 
   // ESCキーでモーダルを閉じる
   useEffect(() => {
@@ -55,15 +56,15 @@ export function SelectionAnswerModal({ isOpen, onClose, onSubmit, songsData }: S
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       {/* バックドロップ - クリックでモーダルを閉じる */}
-      <div 
-        className="absolute inset-0" 
+      <div
+        className="absolute inset-0"
         onClick={handleClose}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -74,7 +75,7 @@ export function SelectionAnswerModal({ isOpen, onClose, onSubmit, songsData }: S
         role="button"
         aria-label="モーダルを閉じる"
       />
-      
+
       {/* モーダルコンテンツ */}
       <div className="relative bg-white rounded-lg max-w-4xl max-h-[90vh] w-full mx-4 overflow-hidden">
         {/* ヘッダー */}
@@ -108,7 +109,17 @@ export function SelectionAnswerModal({ isOpen, onClose, onSubmit, songsData }: S
                         }`}
                       >
                         <div className="flex items-center space-x-3">
-                          <img src={album.jacketUrl} alt={album.name} className="w-12 h-12 rounded object-cover" />
+                          <div className="w-12 h-12 relative flex-shrink-0">
+                            <Image
+                              src={album.jacketUrl}
+                              alt={album.name}
+                              fill
+                              className="rounded object-cover"
+                              sizes="48px"
+                              style={{ objectFit: 'cover' }}
+                              unoptimized
+                            />
+                          </div>
                           <div>
                             <div className="font-medium text-sm">{album.name}</div>
                             <div className="text-xs text-gray-500">{album.tracks.length}曲</div>

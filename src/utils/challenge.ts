@@ -1,4 +1,4 @@
-import type { ChallengeScore, QuizQuestion } from '@/types';
+import type { ChallengeScore } from '@/types';
 
 /**
  * チャレンジモードのスコア計算ユーティリティ

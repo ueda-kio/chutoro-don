@@ -32,7 +32,6 @@ export function ChallengeQuizPlayer({
   userAnswer,
   isAnswerCorrect,
   isAnswerRevealed,
-  isGameCompleted,
   currentScore,
   songsData,
 }: ChallengeQuizPlayerProps) {
@@ -69,7 +68,7 @@ export function ChallengeQuizPlayer({
       setPlayDuration(defaultPlayDuration);
       setActualPlayDuration(defaultPlayDuration);
     }
-  }, [question, defaultPlayDuration]);
+  }, [defaultPlayDuration]);
 
   // 回答結果の表示
   useEffect(() => {
@@ -275,7 +274,7 @@ export function ChallengeQuizPlayer({
         ) : (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">楽曲を選択してください</label>
+              <span className="block text-sm font-medium text-gray-700 mb-2">楽曲を選択してください</span>
               <button
                 type="button"
                 onClick={handleOpenSelectionModal}
@@ -323,6 +322,7 @@ export function ChallengeQuizPlayer({
             {isAnswerCorrect && (
               <div className="bg-green-50 border border-green-200 rounded-md p-4">
                 <div className="flex items-center">
+                  {/* biome-ignore lint/a11y/noSvgWithoutTitle: */}
                   <svg className="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
@@ -338,6 +338,7 @@ export function ChallengeQuizPlayer({
             {!isAnswerCorrect && (inputValue || answerMode === 'selection') && userAnswer && (
               <div className="bg-red-50 border border-red-200 rounded-md p-4">
                 <div className="flex items-center">
+                  {/* biome-ignore lint/a11y/noSvgWithoutTitle: */}
                   <svg className="w-5 h-5 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"

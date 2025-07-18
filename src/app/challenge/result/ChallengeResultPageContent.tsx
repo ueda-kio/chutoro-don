@@ -35,11 +35,11 @@ export function ChallengeResultPageContent() {
     console.log('🎮 チャレンジ結果を取得:', {
       totalScore: result.totalScore,
       scoresCount: result.scores.length,
-      scoresWithDetails: result.scores.map(s => ({
+      scoresWithDetails: result.scores.map((s) => ({
         trackName: s.trackName,
         albumName: s.albumName,
-        artistName: s.artistName
-      }))
+        artistName: s.artistName,
+      })),
     });
 
     setTotalScore(result.totalScore);
@@ -132,7 +132,7 @@ export function ChallengeResultPageContent() {
       } else {
         setRegistrationMessage(result.error || 'ランキング登録に失敗しました');
       }
-    } catch (err) {
+    } catch {
       setRegistrationMessage('ネットワークエラーが発生しました');
     } finally {
       setIsRegistering(false);
