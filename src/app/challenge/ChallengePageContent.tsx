@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import type { SongsData, QuizQuestion, ChallengeSession } from '@/types';
 import { loadSongsData, generateQuizQuestionsFromSelectedAlbums, generateQuizQuestionsFromAllSongs } from '@/utils/quiz';
 import {
@@ -309,11 +310,16 @@ export function ChallengePageContent() {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">中トロドン</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                <Link href="/" className="hover:text-red-600 transition-colors">
+                  中トロドン
+                </Link>
+              </h1>
               <span className="text-lg font-semibold text-red-600">タイムアタック</span>
             </div>
             <div className="flex items-center space-x-4">
               <button type="button" onClick={handleOpenModal} className="p-2 text-gray-600 hover:text-gray-900" aria-label="設定">
+                {/* biome-ignore lint/a11y/noSvgWithoutTitle: */}
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
