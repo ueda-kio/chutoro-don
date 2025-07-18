@@ -94,7 +94,7 @@ export function AlbumSelectorModal({
         onSelectAll={onSelectAll}
         onDeselectAll={onDeselectAll}
       />
-      
+
       {/* 再生時間デフォルト設定 */}
       <div className="mt-6 pt-6 border-t border-gray-200">
         <h3 className="text-lg font-medium text-gray-900 mb-4">再生時間設定</h3>
@@ -116,13 +116,11 @@ export function AlbumSelectorModal({
               <option value={3}>3秒</option>
               <option value={5}>5秒</option>
             </select>
-            <p className="mt-2 text-sm text-gray-500">
-              未選択の場合、次の問題でも現在の再生時間がそのまま使用されます。
-            </p>
+            <p className="mt-2 text-sm text-gray-500">未選択の場合、次の問題でも現在の再生時間がそのまま使用されます。</p>
           </div>
         </div>
       </div>
-      
+
       <div className="mt-6 flex justify-end">
         <button type="button" onClick={onClose} className="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md">
           設定を閉じる

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { SongsData, Album, Track } from '@/types';
 
 interface SelectionAnswerModalProps {
@@ -38,11 +38,45 @@ export function SelectionAnswerModal({ isOpen, onClose, onSubmit, songsData }: S
     setSelectedTrack(null);
   };
 
+  // ESCキーでモーダルを閉じる
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] w-full mx-4 overflow-hidden">
+      {/* バックドロップ - クリックでモーダルを閉じる */}
+      <div 
+        className="absolute inset-0" 
+        onClick={handleClose}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleClose();
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label="モーダルを閉じる"
+      />
+      
+      {/* モーダルコンテンツ */}
+      <div className="relative bg-white rounded-lg max-w-4xl max-h-[90vh] w-full mx-4 overflow-hidden">
         {/* ヘッダー */}
         <div className="bg-red-600 text-white p-4 flex justify-between items-center">
           <h2 className="text-xl font-bold">楽曲を選択</h2>
@@ -51,7 +85,7 @@ export function SelectionAnswerModal({ isOpen, onClose, onSubmit, songsData }: S
           </button>
         </div>
 
-        <div className="flex h-96">
+        <div className="flex max-h-[70vh]">
           {/* アルバム一覧 */}
           <div className="w-1/2 border-r border-gray-200 overflow-y-auto">
             <div className="p-4 bg-gray-50 border-b">
