@@ -73,7 +73,7 @@ let mockRankings: RankingEntry[] = [
     id: 6,
     username: 'テストユーザー',
     score: 4200,
-    rank: 'D',
+    rank: 'F',
     created_at: '2025-01-15T15:00:00.000Z',
   },
 ];
@@ -151,7 +151,7 @@ export const handlers = [
         return HttpResponse.json(response, { status: 400 });
       }
 
-      if (!body.rank || !['S', 'A', 'B', 'C', 'D'].includes(body.rank)) {
+      if (!body.rank || !['SS', 'S', 'A', 'B', 'C', 'D', 'F'].includes(body.rank)) {
         const response: ScoreRegistrationResponse = {
           success: false,
           error: '無効なランクです',
@@ -261,7 +261,7 @@ export const resetMockRankings = () => {
       id: 6,
       username: 'テストユーザー',
       score: 4200,
-      rank: 'D',
+      rank: 'F',
       created_at: '2025-01-15T15:00:00.000Z',
     },
   ];
