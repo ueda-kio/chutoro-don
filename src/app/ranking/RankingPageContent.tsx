@@ -38,6 +38,8 @@ const RankingPageContent = () => {
 
   const getRankColor = (rank: string) => {
     switch (rank) {
+      case 'SS':
+        return 'text-pink-400 font-bold';
       case 'S':
         return 'text-yellow-400 font-bold';
       case 'A':
@@ -47,6 +49,8 @@ const RankingPageContent = () => {
       case 'C':
         return 'text-green-400 font-medium';
       case 'D':
+        return 'text-orange-400';
+      case 'F':
         return 'text-gray-400';
       default:
         return 'text-gray-400';

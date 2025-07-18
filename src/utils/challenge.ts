@@ -126,14 +126,8 @@ export function calculateElapsedTime(startTime: number, endTime: number): number
  * スコアランクを取得
  */
 export function getScoreRank(totalScore: number) {
-  // ランクSS: 15500点 (1000+200+500)*5 + (1000+100+300)*5 = 1700*5 + 1400*5 = 8500 + 7000 = 15500
-  // ランクS:  14000点 (1000+100+300)*10 = 1400*10
-  // ランクA:  12500点 (1000+100+300)*5 + (1000+0+100)*5 = 1400*5 + 1100*5 = 7000 + 5500 = 12500
-  // ランクB:  9000点  (1000+0+100)*8 + (1000+0+100-1000)*2 = 1100*8 + 100*2 = 8800 + 200 = 9000
-  // ランクC:  7000点  (1000+0+100)*6 + (1000+0+100-1000)*4 = 1100*6 + 100*4 = 6600 + 400 = 7000
-
-  if (totalScore >= 15500) return 'SS'; // 神の領域
-  if (totalScore >= 14000) return 'S';  // 素晴らしい
+  if (totalScore >= 16000) return 'SS'; // 神の領域
+  if (totalScore >= 14500) return 'S';  // 素晴らしい
   if (totalScore >= 12500) return 'A';  // 上級者
   if (totalScore >= 9000) return 'B';   // 良好
   if (totalScore >= 7000) return 'C';   // 普通

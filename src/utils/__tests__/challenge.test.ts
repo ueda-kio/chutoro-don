@@ -186,8 +186,8 @@ describe('チャレンジモード - ユーティリティ関数', () => {
 
   describe('getScoreRank', () => {
     it('スコアに応じて正しいランクを返す', () => {
-      expect(getScoreRank(15500)).toBe('SS'); // 最高ランク
-      expect(getScoreRank(14000)).toBe('S');  // 優秀
+      expect(getScoreRank(16000)).toBe('SS'); // 最高ランク
+      expect(getScoreRank(14500)).toBe('S');  // 優秀
       expect(getScoreRank(12500)).toBe('A');  // 良好
       expect(getScoreRank(9000)).toBe('B');   // 普通
       expect(getScoreRank(7000)).toBe('C');   // 要改善
@@ -196,8 +196,8 @@ describe('チャレンジモード - ユーティリティ関数', () => {
     });
 
     it('境界値で正しく判定する', () => {
-      expect(getScoreRank(15499)).toBe('S');  // SS未満
-      expect(getScoreRank(13999)).toBe('A');  // S未満
+      expect(getScoreRank(15999)).toBe('S');  // SS未満
+      expect(getScoreRank(14499)).toBe('A');  // S未満
       expect(getScoreRank(12499)).toBe('B');  // A未満
       expect(getScoreRank(8999)).toBe('C');   // B未満
       expect(getScoreRank(6999)).toBe('D');   // C未満
@@ -207,8 +207,8 @@ describe('チャレンジモード - ユーティリティ関数', () => {
 
   describe('getScoreMessage', () => {
     it('ランクに応じて適切なメッセージを返す', () => {
-      expect(getScoreMessage(15500)).toContain('完璧');
-      expect(getScoreMessage(14000)).toContain('素晴らしい');
+      expect(getScoreMessage(16000)).toContain('完璧');
+      expect(getScoreMessage(14500)).toContain('素晴らしい');
       expect(getScoreMessage(12500)).toContain('よくできました');
       expect(getScoreMessage(9000)).toContain('もう少し');
       expect(getScoreMessage(7000)).toContain('惜しい');
