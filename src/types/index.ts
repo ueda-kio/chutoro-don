@@ -42,6 +42,9 @@ export type GameMode = 'freeplay' | 'challenge';
 export interface ChallengeScore {
   questionIndex: number;
   trackId: string;
+  trackName: string;
+  albumName: string;
+  artistName: string;
   timeBonus: number;
   playDurationBonus: number;
   revealPenalty: number;

@@ -9,6 +9,26 @@ let mockRankings: RankingEntry[] = [
     score: 9800,
     rank: 'S',
     created_at: '2025-01-15T10:00:00.000Z',
+    details: [
+      {
+        trackId: 'track001',
+        trackName: 'サンプル楽曲1',
+        albumName: 'サンプルアルバム1',
+        artistName: 'サンプルアーティスト1',
+        answerTime: 8.5,
+        playbackDuration: 1.5,
+        wasRevealed: false,
+      },
+      {
+        trackId: 'track002',
+        trackName: 'サンプル楽曲2',
+        albumName: 'サンプルアルバム1',
+        artistName: 'サンプルアーティスト1',
+        answerTime: 12.3,
+        playbackDuration: 2.0,
+        wasRevealed: false,
+      },
+    ],
   },
   {
     id: 2,
@@ -16,6 +36,17 @@ let mockRankings: RankingEntry[] = [
     score: 8500,
     rank: 'A',
     created_at: '2025-01-15T11:00:00.000Z',
+    details: [
+      {
+        trackId: 'track003',
+        trackName: 'サンプル楽曲3',
+        albumName: 'サンプルアルバム2',
+        artistName: 'サンプルアーティスト2',
+        answerTime: 15.7,
+        playbackDuration: 2.5,
+        wasRevealed: false,
+      },
+    ],
   },
   {
     id: 3,
@@ -79,6 +110,12 @@ export const handlers = [
       data: sortedRankings,
     };
 
+    console.log('🎭 ランキングレスポンス（詳細情報含む）:', sortedRankings.map(r => ({ 
+      username: r.username, 
+      hasDetails: !!r.details,
+      detailsCount: r.details?.length || 0 
+    })));
+
     return HttpResponse.json(response);
   }),
 
@@ -87,6 +124,7 @@ export const handlers = [
     console.log('🎭 MSW handling POST /api/rankings request');
     try {
       const body = (await request.json()) as ScoreSubmission;
+      console.log('🎭 受信したスコア詳細:', body.details);
 
       // バリデーション
       if (!body.username || body.username.trim().length === 0) {
@@ -128,6 +166,7 @@ export const handlers = [
         score: body.score,
         rank: body.rank,
         created_at: new Date().toISOString(),
+        details: body.details || [],
       };
 
       mockRankings.push(newEntry);
@@ -158,6 +197,26 @@ export const resetMockRankings = () => {
       score: 9800,
       rank: 'S',
       created_at: '2025-01-15T10:00:00.000Z',
+      details: [
+        {
+          trackId: 'track001',
+          trackName: 'サンプル楽曲1',
+          albumName: 'サンプルアルバム1',
+          artistName: 'サンプルアーティスト1',
+          answerTime: 8.5,
+          playbackDuration: 1.5,
+          wasRevealed: false,
+        },
+        {
+          trackId: 'track002',
+          trackName: 'サンプル楽曲2',
+          albumName: 'サンプルアルバム1',
+          artistName: 'サンプルアーティスト1',
+          answerTime: 12.3,
+          playbackDuration: 2.0,
+          wasRevealed: false,
+        },
+      ],
     },
     {
       id: 2,
@@ -165,6 +224,17 @@ export const resetMockRankings = () => {
       score: 8500,
       rank: 'A',
       created_at: '2025-01-15T11:00:00.000Z',
+      details: [
+        {
+          trackId: 'track003',
+          trackName: 'サンプル楽曲3',
+          albumName: 'サンプルアルバム2',
+          artistName: 'サンプルアーティスト2',
+          answerTime: 15.7,
+          playbackDuration: 2.5,
+          wasRevealed: false,
+        },
+      ],
     },
     {
       id: 3,

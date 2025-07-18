@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { RankingEntry, RankingApiResponse } from '@/types/ranking';
+import { RankingDetailModal } from '@/components/RankingDetailModal';
 
 const RankingPageContent = () => {
   const router = useRouter();
   const [rankings, setRankings] = useState<RankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedEntry, setSelectedEntry] = useState<RankingEntry | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchRankings = async () => {
@@ -65,6 +68,22 @@ const RankingPageContent = () => {
     router.back();
   };
 
+  const handleEntryClick = (entry: RankingEntry) => {
+    console.log('🏆 クリックされたエントリ:', {
+      username: entry.username,
+      hasDetails: !!entry.details,
+      detailsCount: entry.details?.length || 0,
+      details: entry.details,
+    });
+    setSelectedEntry(entry);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedEntry(null);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -116,6 +135,7 @@ const RankingPageContent = () => {
           <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6 mb-6">
             <div className="text-center mb-4">
               <p className="text-sm opacity-80">チャレンジモードの上位100位までを表示しています</p>
+              <p className="text-xs opacity-60 mt-1">🖱️ 各プレイヤーをクリックすると詳細情報を表示できます</p>
             </div>
 
             {rankings.length === 0 ? (
@@ -142,34 +162,42 @@ const RankingPageContent = () => {
                     {rankings.map((entry, index) => (
                       <tr
                         key={entry.id}
-                        className={`border-b border-white border-opacity-10 hover:bg-white hover:bg-opacity-5 transition-colors ${
-                          index < 3 ? 'bg-white bg-opacity-5' : ''
-                        }`}
+                        className={`border-b border-white border-opacity-10 ${index < 3 ? 'bg-white bg-opacity-5' : ''}`}
+                        title="クリックで詳細を表示"
                       >
-                        <td className="py-3 px-4">
-                          <span
-                            className={`font-bold ${
-                              index === 0
-                                ? 'text-yellow-400 text-lg'
-                                : index === 1
-                                ? 'text-gray-300 text-lg'
-                                : index === 2
-                                ? 'text-orange-400 text-lg'
-                                : 'text-white'
-                            }`}
+                        <td className="py-3 px-4" colSpan={5} style={{ padding: 0 }}>
+                          <button
+                            type="button"
+                            onClick={() => handleEntryClick(entry)}
+                            className="w-full flex items-center text-left hover:bg-white hover:bg-opacity-10 transition-colors cursor-pointer focus:outline-none"
+                            style={{ padding: 0 }}
                           >
-                            {index + 1}
-                            {index === 0 && ' 🥇'}
-                            {index === 1 && ' 🥈'}
-                            {index === 2 && ' 🥉'}
-                          </span>
+                            <span className="py-3 px-4 w-1/12">
+                              <span
+                                className={`font-bold ${
+                                  index === 0
+                                    ? 'text-yellow-400 text-lg'
+                                    : index === 1
+                                    ? 'text-gray-300 text-lg'
+                                    : index === 2
+                                    ? 'text-orange-400 text-lg'
+                                    : 'text-white'
+                                }`}
+                              >
+                                {index + 1}
+                                {index === 0 && ' 🥇'}
+                                {index === 1 && ' 🥈'}
+                                {index === 2 && ' 🥉'}
+                              </span>
+                            </span>
+                            <span className="py-3 px-4 w-1/12">
+                              <span className={getRankColor(entry.rank)}>{entry.rank}</span>
+                            </span>
+                            <span className="py-3 px-4 w-3/12 font-medium">{entry.username}</span>
+                            <span className="py-3 px-4 w-3/12 text-right font-bold text-lg">{entry.score.toLocaleString()}</span>
+                            <span className="py-3 px-4 w-4/12 text-right text-sm opacity-80">{formatDate(entry.created_at)}</span>
+                          </button>
                         </td>
-                        <td className="py-3 px-4">
-                          <span className={getRankColor(entry.rank)}>{entry.rank}</span>
-                        </td>
-                        <td className="py-3 px-4 font-medium">{entry.username}</td>
-                        <td className="py-3 px-4 text-right font-bold text-lg">{entry.score.toLocaleString()}</td>
-                        <td className="py-3 px-4 text-right text-sm opacity-80">{formatDate(entry.created_at)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -192,6 +220,9 @@ const RankingPageContent = () => {
           </div>
         </div>
       </div>
+
+      {/* 詳細モーダル */}
+      <RankingDetailModal isOpen={isModalOpen} onClose={handleCloseModal} entry={selectedEntry} />
     </div>
   );
 };

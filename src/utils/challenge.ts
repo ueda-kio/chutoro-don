@@ -71,6 +71,9 @@ export function calculateTimeBonus(timeElapsed: number): number {
 export function calculateQuestionScore(
   questionIndex: number,
   trackId: string,
+  trackName: string,
+  albumName: string,
+  artistName: string,
   timeElapsed: number,
   playDuration: number,
   wasRevealed: boolean
@@ -85,6 +88,9 @@ export function calculateQuestionScore(
   return {
     questionIndex,
     trackId,
+    trackName,
+    albumName,
+    artistName,
     timeBonus,
     playDurationBonus,
     revealPenalty,

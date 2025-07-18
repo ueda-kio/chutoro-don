@@ -56,7 +56,7 @@ export function ChallengePageContent() {
         }
 
         // デフォルト再生時間の設定
-        const defaultDuration = defaultDurationParam ? parseFloat(defaultDurationParam) : null;
+        const defaultDuration = defaultDurationParam ? Number.parseFloat(defaultDurationParam) : null;
         setDefaultPlayDuration(defaultDuration);
 
         // チャレンジセッションを初期化
@@ -110,6 +110,9 @@ export function ChallengePageContent() {
       const questionScore = calculateQuestionScore(
         challengeSession.currentQuestionIndex,
         currentQuestion.track.id,
+        currentQuestion.track.title,
+        currentQuestion.album.name,
+        currentQuestion.artist.name,
         timeElapsed,
         playDuration,
         challengeSession.isAnswerRevealed
@@ -162,9 +165,13 @@ export function ChallengePageContent() {
     const currentTime = getHighPrecisionTime();
     const timeElapsed = calculateElapsedTime(challengeSession.currentQuestionStartTime, currentTime);
 
+    const currentQuestion = challengeSession.questions[challengeSession.currentQuestionIndex];
     const questionScore = calculateQuestionScore(
       challengeSession.currentQuestionIndex,
-      challengeSession.questions[challengeSession.currentQuestionIndex].track.id,
+      currentQuestion.track.id,
+      currentQuestion.track.title,
+      currentQuestion.album.name,
+      currentQuestion.artist.name,
       timeElapsed,
       playDuration,
       true // 答えを表示したのでペナルティ

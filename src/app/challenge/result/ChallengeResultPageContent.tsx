@@ -32,6 +32,16 @@ export function ChallengeResultPageContent() {
       return;
     }
 
+    console.log('🎮 チャレンジ結果を取得:', {
+      totalScore: result.totalScore,
+      scoresCount: result.scores.length,
+      scoresWithDetails: result.scores.map(s => ({
+        trackName: s.trackName,
+        albumName: s.albumName,
+        artistName: s.artistName
+      }))
+    });
+
     setTotalScore(result.totalScore);
     setScores(result.scores);
     // sessionStorageから登録状態を復元
@@ -86,9 +96,15 @@ export function ChallengeResultPageContent() {
       // スコア詳細をAPI用のフォーマットに変換
       const details = scores.map((score) => ({
         trackId: score.trackId,
+        trackName: score.trackName,
+        albumName: score.albumName,
+        artistName: score.artistName,
         answerTime: score.timeElapsed,
         playbackDuration: score.playDuration,
+        wasRevealed: score.wasRevealed,
       }));
+
+      console.log('🎵 スコア詳細を送信:', details);
 
       const submission: ScoreSubmission = {
         username: username.trim(),

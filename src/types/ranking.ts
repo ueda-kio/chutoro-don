@@ -8,12 +8,17 @@ export interface RankingEntry {
   score: number;
   rank: string;
   created_at: string;
+  details?: ScoreDetails[];
 }
 
 export interface ScoreDetails {
   trackId: string;
+  trackName: string;
+  albumName: string;
+  artistName: string;
   answerTime: number;
   playbackDuration: number;
+  wasRevealed: boolean;
 }
 
 export interface ScoreSubmission {
