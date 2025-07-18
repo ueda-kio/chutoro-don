@@ -41,7 +41,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ScoreRegi
       );
     }
 
-    if (!body.rank || !['S', 'A', 'B', 'C', 'D'].includes(body.rank)) {
+    if (!body.rank || !['SS', 'S', 'A', 'B', 'C', 'D', 'F'].includes(body.rank)) {
       return NextResponse.json(
         { success: false, error: '無効なランクです' },
         { status: 400 }
