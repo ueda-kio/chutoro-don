@@ -47,6 +47,11 @@ export function ChallengeQuizPlayer({
 
   // 時間更新のタイマー
   useEffect(() => {
+    // 正解済みまたは回答が表示済みの場合は、タイマーを停止
+    if (isAnswerCorrect || isAnswerRevealed) {
+      return;
+    }
+
     const timer = setInterval(() => {
       const currentTime = getHighPrecisionTime();
       const elapsed = calculateElapsedTime(questionStartTime, currentTime);
@@ -54,7 +59,7 @@ export function ChallengeQuizPlayer({
     }, 100);
 
     return () => clearInterval(timer);
-  }, [questionStartTime]);
+  }, [questionStartTime, isAnswerCorrect, isAnswerRevealed]);
 
   // 問題変更時の初期化
   useEffect(() => {
@@ -68,7 +73,7 @@ export function ChallengeQuizPlayer({
       setPlayDuration(defaultPlayDuration);
       setActualPlayDuration(defaultPlayDuration);
     }
-  }, [defaultPlayDuration]);
+  }, [question.track.id, defaultPlayDuration]);
 
   // 回答結果の表示
   useEffect(() => {
