@@ -87,23 +87,23 @@ export default function HomePage() {
 
     // URLパラメータを構築
     const params = new URLSearchParams();
-    
+
     // ゲームモードのパラメータ
     params.set('mode', selectedMode);
-    
+
     // アルバム選択のパラメータ
     if (selectedAlbumIds.length !== totalAlbums) {
       params.set('albums', selectedAlbumIds.join(','));
     }
-    
+
     // デフォルト再生時間のパラメータ
     if (defaultPlayDuration !== null) {
       params.set('defaultDuration', defaultPlayDuration.toString());
     }
-    
+
     // クイズ画面に遷移
     const queryString = params.toString();
-    
+
     if (selectedMode === 'challenge') {
       router.push(`/challenge${queryString ? `?${queryString}` : ''}`);
     } else {
@@ -143,7 +143,7 @@ export default function HomePage() {
         <div className="text-center mb-12">
           <h1 className="text-6xl font-bold text-gray-900 mb-6">中トロドン</h1>
           <p className="text-2xl text-gray-600 mb-6">曲の中トロを聴いて曲名を当てよう</p>
-          
+
           {/* ランキングボタン */}
           <div className="mb-6">
             <Link
@@ -165,20 +165,14 @@ export default function HomePage() {
             <div
               onClick={() => handleModeSelect('freeplay')}
               className={`p-6 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md ${
-                selectedMode === 'freeplay'
-                  ? 'border-primary-600 bg-primary-50'
-                  : 'border-gray-300 hover:border-gray-400'
+                selectedMode === 'freeplay' ? 'border-primary-600 bg-primary-50' : 'border-gray-300 hover:border-gray-400'
               }`}
             >
               <div className="flex items-center mb-4">
-                <div className={`w-4 h-4 rounded-full mr-3 ${
-                  selectedMode === 'freeplay' ? 'bg-primary-600' : 'bg-gray-300'
-                }`} />
+                <div className={`w-4 h-4 rounded-full mr-3 ${selectedMode === 'freeplay' ? 'bg-primary-600' : 'bg-gray-300'}`} />
                 <h3 className="text-xl font-semibold text-gray-900">のんびりモード</h3>
               </div>
-              <p className="text-gray-600 mb-4">
-                答えを表示してゆっくり楽しめる従来のクイズスタイル
-              </p>
+              <p className="text-gray-600 mb-4">答えを表示してゆっくり楽しめる従来のクイズスタイル</p>
               <ul className="text-sm text-gray-500 space-y-1">
                 <li>• 答えを表示してゆっくり楽しめる</li>
                 <li>• 問題数は自由に選択可能</li>
@@ -191,20 +185,14 @@ export default function HomePage() {
             <div
               onClick={() => handleModeSelect('challenge')}
               className={`p-6 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md ${
-                selectedMode === 'challenge'
-                  ? 'border-red-600 bg-red-50'
-                  : 'border-gray-300 hover:border-gray-400'
+                selectedMode === 'challenge' ? 'border-red-600 bg-red-50' : 'border-gray-300 hover:border-gray-400'
               }`}
             >
               <div className="flex items-center mb-4">
-                <div className={`w-4 h-4 rounded-full mr-3 ${
-                  selectedMode === 'challenge' ? 'bg-red-600' : 'bg-gray-300'
-                }`} />
+                <div className={`w-4 h-4 rounded-full mr-3 ${selectedMode === 'challenge' ? 'bg-red-600' : 'bg-gray-300'}`} />
                 <h3 className="text-xl font-semibold text-gray-900">タイムアタック</h3>
               </div>
-              <p className="text-gray-600 mb-4">
-                テキスト入力で回答し、時間とアクションでスコアを競う
-              </p>
+              <p className="text-gray-600 mb-4">テキスト入力で回答し、時間とアクションでスコアを競う</p>
               <ul className="text-sm text-gray-500 space-y-1">
                 <li>• 全10問固定</li>
                 <li>• テキスト入力で回答</li>
@@ -229,14 +217,10 @@ export default function HomePage() {
           </div>
           <div className="text-center py-8">
             <p className="text-gray-600 mb-4">
-              {selectedAlbumIds.length > 0 
-                ? `${selectedAlbumIds.length}個のアルバムが選択されています` 
-                : '出題範囲を設定してください'}
+              {selectedAlbumIds.length > 0 ? `${selectedAlbumIds.length}個のアルバムが選択されています` : '出題範囲を設定してください'}
             </p>
             {selectedAlbumIds.length === 0 && (
-              <p className="text-sm text-gray-500">
-                「出題範囲を設定」ボタンをクリックして、アルバムを選択してください
-              </p>
+              <p className="text-sm text-gray-500">「出題範囲を設定」ボタンをクリックして、アルバムを選択してください</p>
             )}
           </div>
         </div>
@@ -250,17 +234,15 @@ export default function HomePage() {
             className={`px-16 py-6 text-2xl font-bold rounded-lg transform transition hover:scale-105 shadow-lg ${
               selectedAlbumIds.length === 0 || !selectedMode
                 ? 'bg-gray-400 cursor-not-allowed text-gray-200'
-                : selectedMode === 'challenge' 
-                  ? 'bg-red-600 hover:bg-red-700 text-white'
-                  : 'bg-primary-600 hover:bg-primary-700 text-white'
+                : selectedMode === 'challenge'
+                ? 'bg-red-600 hover:bg-red-700 text-white'
+                : 'bg-primary-600 hover:bg-primary-700 text-white'
             }`}
           >
             {selectedMode === 'challenge' ? 'タイムアタック開始' : 'クイズ開始'}
           </button>
           {(selectedAlbumIds.length === 0 || !selectedMode) && (
-            <p className="text-sm text-gray-500 mt-2">
-              {!selectedMode ? 'プレイモードを選択してください' : '出題範囲を設定してください'}
-            </p>
+            <p className="text-sm text-gray-500 mt-2">{!selectedMode ? 'プレイモードを選択してください' : '出題範囲を設定してください'}</p>
           )}
         </div>
 

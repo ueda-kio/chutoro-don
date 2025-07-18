@@ -90,7 +90,7 @@ export function AlbumSelector({
                   <input
                     type="checkbox"
                     checked={selectedAlbumIds.includes(album.id)}
-                    onChange={() => onAlbumToggle(album.id)}
+                    onChange={() => {}}
                     className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="text-sm font-medium text-gray-900 line-clamp-2">{album.name}</span>
