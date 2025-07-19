@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { Artist } from '@/types';
 import { AlbumSelector } from './AlbumSelector';
 
@@ -58,41 +58,74 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
 interface AlbumSelectorModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (settings: { selectedArtistId: string; selectedAlbumIds: string[]; defaultPlayDuration: number | null }) => void;
   artists: Artist[];
-  selectedArtistId: string;
-  selectedAlbumIds: string[];
-  onArtistChange: (artistId: string) => void;
-  onAlbumToggle: (albumId: string) => void;
-  onSelectAll: () => void;
-  onDeselectAll: () => void;
-  defaultPlayDuration: number | null;
-  onDefaultPlayDurationChange: (duration: number | null) => void;
+  initialSelectedArtistId?: string;
+  initialSelectedAlbumIds?: string[];
+  initialDefaultPlayDuration?: number | null;
 }
 
 export function AlbumSelectorModal({
   isOpen,
   onClose,
   artists,
-  selectedArtistId,
-  selectedAlbumIds,
-  onArtistChange,
-  onAlbumToggle,
-  onSelectAll,
-  onDeselectAll,
-  defaultPlayDuration,
-  onDefaultPlayDurationChange,
+  initialSelectedArtistId = '',
+  initialSelectedAlbumIds = [],
+  initialDefaultPlayDuration = null,
 }: AlbumSelectorModalProps) {
+  const [selectedArtistId, setSelectedArtistId] = useState(initialSelectedArtistId);
+  const [selectedAlbumIds, setSelectedAlbumIds] = useState<string[]>(initialSelectedAlbumIds);
+  const [defaultPlayDuration, setDefaultPlayDuration] = useState<number | null>(initialDefaultPlayDuration);
+
+  // モーダルが開かれるたびに初期値をリセット
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedArtistId(initialSelectedArtistId);
+      setSelectedAlbumIds(initialSelectedAlbumIds);
+      setDefaultPlayDuration(initialDefaultPlayDuration);
+    }
+  }, [isOpen, initialSelectedArtistId, initialSelectedAlbumIds, initialDefaultPlayDuration]);
+
+  // 内部ハンドラー
+  const handleArtistChange = (artistId: string) => {
+    setSelectedArtistId(artistId);
+    setSelectedAlbumIds([]); // アーティスト変更時はアルバム選択をリセット
+  };
+
+  const handleAlbumToggle = (albumId: string) => {
+    setSelectedAlbumIds((prev) => (prev.includes(albumId) ? prev.filter((id) => id !== albumId) : [...prev, albumId]));
+  };
+
+  const handleSelectAll = () => {
+    const selectedArtist = artists.find((artist) => artist.id === selectedArtistId);
+    if (selectedArtist) {
+      setSelectedAlbumIds(selectedArtist.albums.map((album) => album.id));
+    }
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedAlbumIds([]);
+  };
+
+  const handleClose = () => {
+    // 設定を親に返してモーダルを閉じる
+    onClose({
+      selectedArtistId,
+      selectedAlbumIds,
+      defaultPlayDuration,
+    });
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="出題範囲設定">
+    <Modal isOpen={isOpen} onClose={handleClose} title="出題範囲設定">
       <AlbumSelector
         artists={artists}
         selectedArtistId={selectedArtistId}
         selectedAlbumIds={selectedAlbumIds}
-        onArtistChange={onArtistChange}
-        onAlbumToggle={onAlbumToggle}
-        onSelectAll={onSelectAll}
-        onDeselectAll={onDeselectAll}
+        onArtistChange={handleArtistChange}
+        onAlbumToggle={handleAlbumToggle}
+        onSelectAll={handleSelectAll}
+        onDeselectAll={handleDeselectAll}
       />
 
       {/* 再生時間デフォルト設定 */}
@@ -106,7 +139,7 @@ export function AlbumSelectorModal({
             <select
               id="default-duration-select"
               value={defaultPlayDuration || ''}
-              onChange={(e) => onDefaultPlayDurationChange(e.target.value ? Number(e.target.value) : null)}
+              onChange={(e) => setDefaultPlayDuration(e.target.value ? Number(e.target.value) : null)}
               className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
             >
               <option value="">未選択（現在の再生時間を引き継ぎ）</option>
@@ -122,7 +155,7 @@ export function AlbumSelectorModal({
       </div>
 
       <div className="mt-6 flex justify-end">
-        <button type="button" onClick={onClose} className="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md">
+        <button type="button" onClick={handleClose} className="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md">
           設定を閉じる
         </button>
       </div>

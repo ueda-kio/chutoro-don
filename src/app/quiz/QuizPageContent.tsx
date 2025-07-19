@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import type { SongsData, QuizQuestion } from '@/types';
 import { loadSongsData, generateQuizQuestions, generateQuizQuestionsFromAllSongs } from '@/utils/quiz';
 import { QuizPlayer } from '@/components/QuizPlayer';
-import { AlbumSelectorModal } from '@/components/Modal';
+import { AlbumSelectorModal } from '@/components/AlbumSelectorModal';
 import Link from 'next/link';
 
 export function QuizPageContent() {
@@ -21,7 +21,6 @@ export function QuizPageContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedArtistId, setSelectedArtistId] = useState('');
   const [selectedAlbumIds, setSelectedAlbumIds] = useState<string[]>([]);
-  const [pendingQuestions, setPendingQuestions] = useState<QuizQuestion[]>([]);
 
   useEffect(() => {
     const loadDataAndGenerateQuestions = async () => {
@@ -86,65 +85,22 @@ export function QuizPageContent() {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (settings: { selectedArtistId: string; selectedAlbumIds: string[]; defaultPlayDuration: number | null }) => {
     setIsModalOpen(false);
+    setSelectedArtistId(settings.selectedArtistId);
+    setSelectedAlbumIds(settings.selectedAlbumIds);
+    setDefaultPlayDuration(settings.defaultPlayDuration);
 
     // モーダルを閉じる時に新しい問題を生成
-    if (songsData && selectedAlbumIds.length > 0 && pendingQuestions.length > 0) {
-      setQuestions(pendingQuestions);
-      setCurrentQuestionIndex(0); // 最初の問題にリセット
-      setPendingQuestions([]);
-    }
-  };
-
-  const handleArtistChange = (artistId: string) => {
-    setSelectedArtistId(artistId);
-    setSelectedAlbumIds([]); // アーティスト変更時はアルバム選択をリセット
-  };
-
-  const handleAlbumToggle = (albumId: string) => {
-    const newSelectedAlbumIds = selectedAlbumIds.includes(albumId)
-      ? selectedAlbumIds.filter((id) => id !== albumId)
-      : [...selectedAlbumIds, albumId];
-
-    setSelectedAlbumIds(newSelectedAlbumIds);
-
-    // 新しいクイズ問題を生成（プレビュー用）
-    if (songsData && newSelectedAlbumIds.length > 0) {
+    if (songsData && settings.selectedAlbumIds.length > 0) {
       try {
-        const newQuestions = generateQuizQuestions(newSelectedAlbumIds, songsData, 10);
-        setPendingQuestions(newQuestions);
+        const newQuestions = generateQuizQuestions(settings.selectedAlbumIds, songsData, 10);
+        setQuestions(newQuestions);
+        setCurrentQuestionIndex(0); // 最初の問題にリセット
       } catch (error) {
         console.error('Failed to generate new questions:', error);
-        setPendingQuestions([]);
-      }
-    } else {
-      setPendingQuestions([]);
-    }
-  };
-
-  const handleSelectAll = () => {
-    const selectedArtist = songsData?.artists.find((artist) => artist.id === selectedArtistId);
-    if (selectedArtist) {
-      const allAlbumIds = selectedArtist.albums.map((album) => album.id);
-      setSelectedAlbumIds(allAlbumIds);
-
-      // 新しいクイズ問題を生成（プレビュー用）
-      if (songsData) {
-        try {
-          const newQuestions = generateQuizQuestions(allAlbumIds, songsData, 10);
-          setPendingQuestions(newQuestions);
-        } catch (error) {
-          console.error('Failed to generate new questions:', error);
-          setPendingQuestions([]);
-        }
       }
     }
-  };
-
-  const handleDeselectAll = () => {
-    setSelectedAlbumIds([]);
-    setPendingQuestions([]);
   };
 
   if (loading) {
@@ -208,9 +164,9 @@ export function QuizPageContent() {
         </div>
 
         {/* クイズプレイヤー */}
-        <QuizPlayer 
-          question={currentQuestion} 
-          onNext={handleNext} 
+        <QuizPlayer
+          question={currentQuestion}
+          onNext={handleNext}
           isLastQuestion={currentQuestionIndex === questions.length - 1}
           defaultPlayDuration={defaultPlayDuration}
         />
@@ -221,14 +177,9 @@ export function QuizPageContent() {
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             artists={songsData.artists}
-            selectedArtistId={selectedArtistId}
-            selectedAlbumIds={selectedAlbumIds}
-            onArtistChange={handleArtistChange}
-            onAlbumToggle={handleAlbumToggle}
-            onSelectAll={handleSelectAll}
-            onDeselectAll={handleDeselectAll}
-            defaultPlayDuration={defaultPlayDuration}
-            onDefaultPlayDurationChange={setDefaultPlayDuration}
+            initialSelectedArtistId={selectedArtistId}
+            initialSelectedAlbumIds={selectedAlbumIds}
+            initialDefaultPlayDuration={defaultPlayDuration}
           />
         )}
       </div>

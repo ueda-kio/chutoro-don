@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { SongsData, GameMode } from '@/types';
 import { loadSongsData } from '@/utils/quiz';
-import { AlbumSelectorModal } from '@/components/Modal';
+import { AlbumSelectorModal } from '@/components/AlbumSelectorModal';
 
 export default function HomePage() {
   const router = useRouter();
@@ -39,32 +39,15 @@ export default function HomePage() {
     loadData();
   }, []);
 
-  const handleArtistChange = (artistId: string) => {
-    setSelectedArtistId(artistId);
-    setSelectedAlbumIds([]); // アーティスト変更時はアルバム選択をリセット
-  };
-
-  const handleAlbumToggle = (albumId: string) => {
-    setSelectedAlbumIds((prev) => (prev.includes(albumId) ? prev.filter((id) => id !== albumId) : [...prev, albumId]));
-  };
-
-  const handleSelectAll = () => {
-    const selectedArtist = songsData?.artists.find((artist) => artist.id === selectedArtistId);
-    if (selectedArtist) {
-      setSelectedAlbumIds(selectedArtist.albums.map((album) => album.id));
-    }
-  };
-
-  const handleDeselectAll = () => {
-    setSelectedAlbumIds([]);
-  };
-
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (settings: { selectedArtistId: string; selectedAlbumIds: string[]; defaultPlayDuration: number | null }) => {
     setIsModalOpen(false);
+    setSelectedArtistId(settings.selectedArtistId);
+    setSelectedAlbumIds(settings.selectedAlbumIds);
+    setDefaultPlayDuration(settings.defaultPlayDuration);
   };
 
   const handleModeSelect = (mode: GameMode) => {
@@ -252,14 +235,9 @@ export default function HomePage() {
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             artists={songsData.artists}
-            selectedArtistId={selectedArtistId}
-            selectedAlbumIds={selectedAlbumIds}
-            onArtistChange={handleArtistChange}
-            onAlbumToggle={handleAlbumToggle}
-            onSelectAll={handleSelectAll}
-            onDeselectAll={handleDeselectAll}
-            defaultPlayDuration={defaultPlayDuration}
-            onDefaultPlayDurationChange={setDefaultPlayDuration}
+            initialSelectedArtistId={selectedArtistId}
+            initialSelectedAlbumIds={selectedAlbumIds}
+            initialDefaultPlayDuration={defaultPlayDuration}
           />
         )}
       </div>
