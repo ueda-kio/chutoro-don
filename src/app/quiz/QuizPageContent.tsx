@@ -169,6 +169,7 @@ export function QuizPageContent() {
           onNext={handleNext}
           isLastQuestion={currentQuestionIndex === questions.length - 1}
           defaultPlayDuration={defaultPlayDuration}
+          songsData={songsData}
         />
 
         {/* 出題範囲設定モーダル */}

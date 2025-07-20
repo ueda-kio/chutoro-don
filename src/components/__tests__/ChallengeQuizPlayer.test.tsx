@@ -6,6 +6,7 @@ import type { QuizQuestion } from '@/types';
 jest.mock('@/hooks/useYouTubePlayer', () => ({
   useYouTubePlayer: () => ({
     isReady: true,
+    isPlayerReady: true,
     isPlaying: false,
     initializePlayer: jest.fn(),
     playTrack: jest.fn(),
@@ -56,6 +57,7 @@ describe('ChallengeQuizPlayer', () => {
         isAnswerRevealed={false}
         isGameCompleted={false}
         currentScore={0}
+        songsData={null}
       />
     );
 
@@ -78,6 +80,7 @@ describe('ChallengeQuizPlayer', () => {
         isAnswerRevealed={false}
         isGameCompleted={false}
         currentScore={0}
+        songsData={null}
       />
     );
 
@@ -106,6 +109,7 @@ describe('ChallengeQuizPlayer', () => {
         isAnswerRevealed={false}
         isGameCompleted={false}
         currentScore={0}
+        songsData={null}
       />
     );
 

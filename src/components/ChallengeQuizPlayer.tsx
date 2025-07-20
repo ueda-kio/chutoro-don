@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { QuizQuestion, SongsData, Track } from '@/types';
+import type { QuizQuestion, SongsData } from '@/types';
 import { useYouTubePlayer } from '@/hooks/useYouTubePlayer';
 import { getHighPrecisionTime, calculateElapsedTime } from '@/utils/challenge';
-import { SelectionAnswerModal } from './SelectionAnswerModal';
+import { SongAnswer } from './SongAnswer';
 import Image from 'next/image';
 
 interface ChallengeQuizPlayerProps {
@@ -36,13 +36,10 @@ export function ChallengeQuizPlayer({
   songsData,
 }: ChallengeQuizPlayerProps) {
   const [playDuration, setPlayDuration] = useState(defaultPlayDuration ?? 1);
-  const [inputValue, setInputValue] = useState('');
   const [questionStartTime, setQuestionStartTime] = useState(getHighPrecisionTime());
   const [elapsedTime, setElapsedTime] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [actualPlayDuration, setActualPlayDuration] = useState(defaultPlayDuration ?? 1);
-  const [answerMode, setAnswerMode] = useState<'text' | 'selection'>('text');
-  const [isSelectionModalOpen, setIsSelectionModalOpen] = useState(false);
   const { isReady, isPlayerReady, isPlaying, initializePlayer, playTrack, stopTrack } = useYouTubePlayer();
 
   // 時間更新のタイマー
@@ -63,7 +60,6 @@ export function ChallengeQuizPlayer({
 
   // 問題変更時の初期化
   useEffect(() => {
-    setInputValue('');
     setQuestionStartTime(getHighPrecisionTime());
     setElapsedTime(0);
     setShowFeedback(false);
@@ -103,11 +99,8 @@ export function ChallengeQuizPlayer({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (inputValue.trim()) {
-      onAnswerSubmit(inputValue.trim(), actualPlayDuration);
-    }
+  const handleAnswerSubmit = (answer: string) => {
+    onAnswerSubmit(answer, actualPlayDuration);
   };
 
   const handleReveal = () => {
@@ -118,15 +111,6 @@ export function ChallengeQuizPlayer({
   const handleNext = () => {
     stopTrack();
     onNext();
-  };
-
-  const handleSelectionSubmit = (selectedTrack: Track) => {
-    onAnswerSubmit(selectedTrack.title, actualPlayDuration);
-    setIsSelectionModalOpen(false);
-  };
-
-  const handleOpenSelectionModal = () => {
-    setIsSelectionModalOpen(true);
   };
 
   const formatTime = (seconds: number) => {
@@ -215,110 +199,19 @@ export function ChallengeQuizPlayer({
         </div>
       </div>
 
-      {/* 回答方式選択 */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="mb-4">
-          <div className="flex items-center justify-center space-x-1 bg-gray-100 p-1 rounded-lg">
-            <button
-              type="button"
-              onClick={() => setAnswerMode('text')}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                answerMode === 'text' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-600 hover:text-gray-800'
-              }`}
-            >
-              テキスト入力
-            </button>
-            <button
-              type="button"
-              onClick={() => setAnswerMode('selection')}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                answerMode === 'selection' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-600 hover:text-gray-800'
-              }`}
-            >
-              選択式
-            </button>
-          </div>
-        </div>
-
-        {answerMode === 'text' ? (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="answer-input" className="block text-sm font-medium text-gray-700 mb-2">
-                楽曲名を入力してください
-              </label>
-              <input
-                id="answer-input"
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                disabled={isAnswerCorrect || isAnswerRevealed}
-                placeholder="楽曲名を入力..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
-                autoComplete="off"
-              />
-            </div>
-
-            <div className="flex space-x-3">
-              <button
-                type="submit"
-                disabled={!inputValue.trim() || isAnswerCorrect || isAnswerRevealed}
-                className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                回答する
-              </button>
-              <button
-                type="button"
-                onClick={handleReveal}
-                disabled={isAnswerCorrect || isAnswerRevealed}
-                className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                答えを表示 (-1000pt)
-              </button>
-            </div>
-          </form>
-        ) : (
-          <div className="space-y-4">
-            <div>
-              <span className="block text-sm font-medium text-gray-700 mb-2">楽曲を選択してください</span>
-              <button
-                type="button"
-                onClick={handleOpenSelectionModal}
-                disabled={isAnswerCorrect || isAnswerRevealed}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:ring-red-500 focus:border-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-lg text-left"
-              >
-                <span className="text-gray-500">アルバム・楽曲を選択...</span>
-              </button>
-            </div>
-
-            <div className="flex space-x-3">
-              <button
-                type="button"
-                onClick={handleOpenSelectionModal}
-                disabled={isAnswerCorrect || isAnswerRevealed}
-                className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                楽曲を選択して回答
-              </button>
-              <button
-                type="button"
-                onClick={handleReveal}
-                disabled={isAnswerCorrect || isAnswerRevealed}
-                className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                答えを表示 (-1000pt)
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 選択式回答モーダル */}
-      <SelectionAnswerModal
-        isOpen={isSelectionModalOpen}
-        onClose={() => setIsSelectionModalOpen(false)}
-        onSubmit={handleSelectionSubmit}
-        songsData={songsData}
-      />
+      {/* 楽曲回答機能 */}
+      {!isAnswerCorrect && !isAnswerRevealed && (
+        <SongAnswer
+          disabled={!isPlayerReady}
+          isChallenge={true}
+          onAnswerSubmit={handleAnswerSubmit}
+          onRevealAnswer={handleReveal}
+          songsData={songsData}
+          placeholder="楽曲名を入力..."
+          submitButtonText="回答する"
+          revealButtonText="答えを表示 (-1000pt)"
+        />
+      )}
 
       {/* フィードバック表示 */}
       {showFeedback && (
@@ -340,7 +233,7 @@ export function ChallengeQuizPlayer({
                 <p className="text-green-700 mt-1">回答: {userAnswer}</p>
               </div>
             )}
-            {!isAnswerCorrect && (inputValue || answerMode === 'selection') && userAnswer && (
+            {!isAnswerCorrect && userAnswer && (
               <div className="bg-red-50 border border-red-200 rounded-md p-4">
                 <div className="flex items-center">
                   {/* biome-ignore lint/a11y/noSvgWithoutTitle: */}

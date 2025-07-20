@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { QuizQuestion } from '@/types';
+import type { QuizQuestion, SongsData } from '@/types';
 import { useYouTubePlayer } from '@/hooks/useYouTubePlayer';
+import { SongAnswer } from './SongAnswer';
 import Image from 'next/image';
 
 interface QuizPlayerProps {
@@ -10,15 +11,22 @@ interface QuizPlayerProps {
   onNext: () => void;
   isLastQuestion: boolean;
   defaultPlayDuration?: number | null;
+  songsData?: SongsData | null;
 }
 
-export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDuration }: QuizPlayerProps) {
+export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDuration, songsData }: QuizPlayerProps) {
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
   const [playDuration, setPlayDuration] = useState(defaultPlayDuration ?? 1);
+  const [userAnswer, setUserAnswer] = useState<string>('');
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean>(false);
+  const [showAnswer, setShowAnswer] = useState(false);
   const { isReady, isPlayerReady, isPlaying, initializePlayer, playTrack, stopTrack } = useYouTubePlayer();
 
   useEffect(() => {
     setIsAnswerRevealed(false);
+    setUserAnswer('');
+    setIsAnswerCorrect(false);
+    setShowAnswer(false);
     // デフォルト再生時間が設定されている場合は、そのデフォルト値を使用
     // 未設定の場合は、現在の再生時間を引き継ぐ
     if (defaultPlayDuration !== null && defaultPlayDuration !== undefined) {
@@ -48,7 +56,24 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
 
   const handleRevealAnswer = () => {
     setIsAnswerRevealed(true);
+    setShowAnswer(true);
     stopTrack();
+  };
+
+  const handleAnswerConfirm = (isCorrect: boolean, answer: string) => {
+    setUserAnswer(answer);
+    setIsAnswerCorrect(isCorrect);
+    setShowAnswer(true);
+    // 正解時は即座に解答エリアも表示
+    if (isCorrect) {
+      setIsAnswerRevealed(true);
+      // 正解時は5秒間自動再生
+      if (isPlayerReady) {
+        playTrack(question.track.youtubeUrl, question.startTime, 5);
+      }
+    } else {
+      stopTrack();
+    }
   };
 
   const handleNext = () => {
@@ -116,22 +141,87 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
         <div className="text-center mt-3 mb-4">
           <p className="text-xs text-gray-400">※ 1曲目は再生に時間がかかる場合があります</p>
         </div>
-
-        <div className="text-center">
-          <button
-            type="button"
-            onClick={handleRevealAnswer}
-            disabled={isAnswerRevealed}
-            className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isAnswerRevealed ? '答えを表示済み' : '答えを表示'}
-          </button>
-        </div>
       </div>
+
+      {/* 楽曲回答機能 */}
+      {!showAnswer && (
+        <SongAnswer
+          disabled={!isPlayerReady}
+          isChallenge={false}
+          onAnswerConfirm={handleAnswerConfirm}
+          onRevealAnswer={handleRevealAnswer}
+          correctAnswer={question.track.title}
+          songsData={songsData}
+          placeholder="楽曲名を入力..."
+          submitButtonText="回答する"
+          revealButtonText="答えを表示"
+        />
+      )}
+
+      {/* 回答フィードバック */}
+      {showAnswer && userAnswer && !isAnswerRevealed && !isAnswerCorrect && (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="p-4 rounded-md">
+            <div className="bg-red-50 border border-red-200 rounded-md p-4">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <title>不正解</title>
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="text-red-800 font-medium">不正解</span>
+              </div>
+              <p className="text-red-700 mt-1">回答: {userAnswer}</p>
+              <div className="mt-3">
+                <button
+                  type="button"
+                  onClick={handleRevealAnswer}
+                  className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md text-sm"
+                >
+                  正解を見る
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 解答エリア */}
       {isAnswerRevealed && (
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
+          {/* 正解メッセージ */}
+          {isAnswerCorrect && userAnswer && (
+            <div className="mb-6">
+              <div className="bg-green-50 border border-green-200 rounded-md p-4">
+                <div className="flex items-center justify-center">
+                  <svg className="w-6 h-6 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <title>正解</title>
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="text-green-800 font-bold text-lg">正解！</span>
+                </div>
+                <p className="text-green-700 mt-2">回答: {userAnswer}</p>
+                {isPlaying && (
+                  <div className="flex items-center justify-center mt-3">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </div>
+                    <span className="text-green-600 ml-2 text-sm">楽曲を再生中...</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="mb-4">
             <Image
               src={question.album.jacketUrl}
@@ -152,7 +242,7 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
         <button
           type="button"
           onClick={handleNext}
-          disabled={!isAnswerRevealed}
+          disabled={!showAnswer}
           className="px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLastQuestion ? 'クイズ終了' : '次へ'}
