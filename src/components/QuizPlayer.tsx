@@ -57,7 +57,10 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
   const handleRevealAnswer = () => {
     setIsAnswerRevealed(true);
     setShowAnswer(true);
-    stopTrack();
+    // 答えを表示時も5秒間自動再生
+    if (isPlayerReady) {
+      playTrack(question.track.youtubeUrl, question.startTime, 5);
+    }
   };
 
   const handleAnswerConfirm = (isCorrect: boolean, answer: string) => {
@@ -231,6 +234,19 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
               className="mx-auto rounded-lg shadow-md"
             />
           </div>
+
+          {/* 解答表示時の再生中インジケーター */}
+          {isPlaying && !isAnswerCorrect && (
+            <div className="flex items-center justify-center mb-4">
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+              <span className="text-primary-600 ml-2 text-sm">楽曲を再生中...</span>
+            </div>
+          )}
+
           <h2 className="text-2xl font-bold text-gray-900 mb-2">{question.track.title}</h2>
           <p className="text-lg text-gray-600 mb-1">{question.artist.name}</p>
           <p className="text-md text-gray-500">{question.album.name}</p>
