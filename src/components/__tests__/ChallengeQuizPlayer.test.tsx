@@ -8,9 +8,11 @@ jest.mock('@/hooks/useYouTubePlayer', () => ({
     isReady: true,
     isPlayerReady: true,
     isPlaying: false,
+    isVideoLoaded: true,
     initializePlayer: jest.fn(),
     playTrack: jest.fn(),
     stopTrack: jest.fn(),
+    preloadVideo: jest.fn(),
   }),
 }));
 

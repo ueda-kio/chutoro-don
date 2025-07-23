@@ -20,7 +20,7 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
   const [userAnswer, setUserAnswer] = useState<string>('');
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean>(false);
   const [showAnswer, setShowAnswer] = useState(false);
-  const { isReady, isPlayerReady, isPlaying, initializePlayer, playTrack, stopTrack } = useYouTubePlayer();
+  const { isReady, isPlayerReady, isPlaying, isVideoLoaded, initializePlayer, playTrack, stopTrack, preloadVideo } = useYouTubePlayer();
 
   useEffect(() => {
     setIsAnswerRevealed(false);
@@ -40,6 +40,13 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
       initializePlayer('youtube-player');
     }
   }, [isReady, initializePlayer]);
+
+  // 問題が変わったら自動的に動画をプリロード
+  useEffect(() => {
+    if (isPlayerReady && question?.track?.youtubeUrl) {
+      preloadVideo(question.track.youtubeUrl);
+    }
+  }, [question?.track?.youtubeUrl, isPlayerReady, preloadVideo]);
 
   const handlePlay = () => {
     if (!isPlayerReady) {
@@ -97,8 +104,8 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
           <button
             type="button"
             onClick={handlePlay}
-            disabled={!isPlayerReady}
-            className="flex items-center justify-center w-16 h-16 bg-primary-600 hover:bg-primary-700 text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!isPlayerReady || !isVideoLoaded}
+            className="flex items-center justify-center w-16 h-16 bg-primary-600 hover:bg-primary-700 text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
           >
             {isPlaying ? (
               <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20" role="img" aria-label="一時停止">
