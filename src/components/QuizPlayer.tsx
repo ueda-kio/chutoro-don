@@ -20,6 +20,7 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
   const [userAnswer, setUserAnswer] = useState<string>('');
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean>(false);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [showIncorrectFeedback, setShowIncorrectFeedback] = useState(false);
   const { isReady, isPlayerReady, isPlaying, isVideoLoaded, initializePlayer, playTrack, stopTrack, preloadVideo } = useYouTubePlayer();
 
   useEffect(() => {
@@ -27,6 +28,7 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
     setUserAnswer('');
     setIsAnswerCorrect(false);
     setShowAnswer(false);
+    setShowIncorrectFeedback(false);
     // デフォルト再生時間が設定されている場合は、そのデフォルト値を使用
     // 未設定の場合は、現在の再生時間を引き継ぐ
     if (defaultPlayDuration !== null && defaultPlayDuration !== undefined) {
@@ -73,16 +75,26 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
   const handleAnswerConfirm = (isCorrect: boolean, answer: string) => {
     setUserAnswer(answer);
     setIsAnswerCorrect(isCorrect);
-    setShowAnswer(true);
-    // 正解時は即座に解答エリアも表示
+
+    // 正解時のみ完全に解答を表示
     if (isCorrect) {
+      setShowAnswer(true);
       setIsAnswerRevealed(true);
       // 正解時は5秒間自動再生
       if (isPlayerReady) {
         playTrack(question.track.youtubeUrl, question.startTime, 5);
       }
     } else {
+      // 不正解時は不正解フィードバックを表示し、2秒後に自動的に消す
+      setShowIncorrectFeedback(true);
       stopTrack();
+
+      // 2秒後に不正解フィードバックを自動的に消す
+      setTimeout(() => {
+        setShowIncorrectFeedback(false);
+        setUserAnswer('');
+        setIsAnswerCorrect(false);
+      }, 2000);
     }
   };
 
@@ -154,7 +166,7 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
       </div>
 
       {/* 楽曲回答機能 */}
-      {!showAnswer && (
+      {!showAnswer && !isAnswerRevealed && (
         <SongAnswer
           disabled={!isPlayerReady}
           isChallenge={false}
@@ -168,12 +180,12 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
         />
       )}
 
-      {/* 回答フィードバック */}
-      {showAnswer && userAnswer && !isAnswerRevealed && !isAnswerCorrect && (
+      {/* 不正解フィードバック */}
+      {showIncorrectFeedback && !isAnswerRevealed && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="p-4 rounded-md">
             <div className="bg-red-50 border border-red-200 rounded-md p-4">
-              <div className="flex items-center">
+              <div className="flex items-center justify-center">
                 <svg className="w-5 h-5 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <title>不正解</title>
                   <path
@@ -183,16 +195,6 @@ export function QuizPlayer({ question, onNext, isLastQuestion, defaultPlayDurati
                   />
                 </svg>
                 <span className="text-red-800 font-medium">不正解</span>
-              </div>
-              <p className="text-red-700 mt-1">回答: {userAnswer}</p>
-              <div className="mt-3">
-                <button
-                  type="button"
-                  onClick={handleRevealAnswer}
-                  className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md text-sm"
-                >
-                  正解を見る
-                </button>
               </div>
             </div>
           </div>
